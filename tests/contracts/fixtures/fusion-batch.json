@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "coordinate_frame": "LOCAL_TANK_RH",
+  "target_id": "UUV-001",
+  "sim_time_s": 0.0,
+  "vision": {
+    "schema_version": "1.0",
+    "coordinate_frame": "LOCAL_TANK_RH",
+    "target_id": "UUV-001",
+    "sim_time_s": 0.0,
+    "algorithm_id": "flat_snell_baseline_v1",
+    "algorithm_version": "1.0.0",
+    "valid": true,
+    "status": "SUCCESS",
+    "reason": "",
+    "position_m": [
+      0.6999999999999971,
+      -2.795590509979849e-14,
+      -0.999999999999895
+    ],
+    "yaw_rad": 1.570796326794858,
+    "orientation_wxyz": [
+      0.7071067811865612,
+      0.0,
+      0.0,
+      0.7071067811865338
+    ],
+    "estimated_dofs": [
+      "x",
+      "y",
+      "z",
+      "yaw"
+    ],
+    "position_covariance_m2": null,
+    "reprojection_rmse_px": 3.080000489963893e-11,
+    "used_measurement_ids": [
+      "0:UUV-001:C1:1",
+      "0:UUV-001:C1:2",
+      "0:UUV-001:C2:0",
+      "0:UUV-001:C2:2",
+      "0:UUV-001:C3:1",
+      "0:UUV-001:C3:2"
+    ],
+    "evidence_status": "DEMO_UNCALIBRATED",
+    "correction_status": "MODEL_AWARE_DEMO",
+    "filter_lag_nominal_s": 0.0
+  },
+  "acoustic": [],
+  "communication": []
+}

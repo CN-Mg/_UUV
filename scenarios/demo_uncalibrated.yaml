@@ -1,0 +1,113 @@
+# DEMO_UNCALIBRATED：默认有波演示；平面与理想模式可在前端选择。
+schema_version: '1.0'
+scenario_id: demo_uncalibrated
+name: 微型 UUV 基础闭环演示
+evidence_status: DEMO_UNCALIBRATED
+coordinate_frame: LOCAL_TANK_RH
+mode: WAVY_SNELL_REFRACTION
+seed: 20261102
+dt_s: 0.1
+duration_s: 60.0
+tank:
+  length_m: 5.0
+  width_m: 5.0
+  depth_m: 2.0
+cameras:
+- camera_id: C1
+  position_m:
+  - -2.0
+  - -2.0
+  - 1.5
+  look_at_m:
+  - 0.0
+  - 0.0
+  - -1.0
+  width_px: 1280
+  height_px: 720
+  fx_px: 900.0
+  fy_px: 900.0
+  cx_px: 640.0
+  cy_px: 360.0
+- camera_id: C2
+  position_m:
+  - 2.0
+  - -2.0
+  - 1.5
+  look_at_m:
+  - 0.0
+  - 0.0
+  - -1.0
+  width_px: 1280
+  height_px: 720
+  fx_px: 900.0
+  fy_px: 900.0
+  cx_px: 640.0
+  cy_px: 360.0
+- camera_id: C3
+  position_m:
+  - 0.0
+  - 2.2
+  - 1.5
+  look_at_m:
+  - 0.0
+  - 0.0
+  - -1.0
+  width_px: 1280
+  height_px: 720
+  fx_px: 900.0
+  fy_px: 900.0
+  cx_px: 640.0
+  cy_px: 360.0
+targets:
+- target_id: UUV-001
+  radius_m: 0.7
+  depth_m: 1.0
+  period_s: 60.0
+  phase_rad: 0.0
+  center_xy_m:
+  - 0.0
+  - 0.0
+optics:
+  n_air: 1.00029
+  n_water: 1.333
+wave:
+  amplitude_m: 0.02
+  wavelengths_m:
+  - 1.5
+  - 2.0
+  periods_s:
+  - 1.0
+  - 1.2
+  directions_rad:
+  - 0.0
+  - 1.2
+pixel_noise_std_px: 0.0
+adapters:
+  layout: fixed_layout_v1
+  vision: flat_snell_baseline_v1
+  refraction: snell_single_interface_v1
+  wave: seeded_multisine_v1
+  acoustic: buffered_ranges_v1
+  fusion: noop_fusion_v1
+experiments:
+  comparison_vision_ids:
+  - pinhole_baseline_v1
+  - flat_snell_smoothed_v1
+anchors_world_m:
+  A1:
+  - 0.0
+  - 0.0
+  - -1.8
+fusion_context:
+  schema_version: '1.0'
+  coordinate_frame: LOCAL_TANK_RH
+  anchors_world_m:
+    A1:
+    - 0.0
+    - 0.0
+    - -1.8
+  sensor_extrinsics: {}
+  clock_offsets_s: {}
+  clock_scales: {}
+  error_models: {}
+  alignment_tolerance_s: 1.0e-06

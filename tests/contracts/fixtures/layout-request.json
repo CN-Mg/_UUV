@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "coordinate_frame": "LOCAL_TANK_RH",
+  "tank": {
+    "length_m": 5.0,
+    "width_m": 5.0,
+    "depth_m": 2.0
+  },
+  "cameras": [
+    {
+      "camera_id": "C1",
+      "position_m": [
+        -2.0,
+        -2.0,
+        1.5
+      ],
+      "look_at_m": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "width_px": 1280,
+      "height_px": 720,
+      "fx_px": 900.0,
+      "fy_px": 900.0,
+      "cx_px": 640.0,
+      "cy_px": 360.0
+    },
+    {
+      "camera_id": "C2",
+      "position_m": [
+        2.0,
+        -2.0,
+        1.5
+      ],
+      "look_at_m": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "width_px": 1280,
+      "height_px": 720,
+      "fx_px": 900.0,
+      "fy_px": 900.0,
+      "cx_px": 640.0,
+      "cy_px": 360.0
+    },
+    {
+      "camera_id": "C3",
+      "position_m": [
+        0.0,
+        2.2,
+        1.5
+      ],
+      "look_at_m": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "width_px": 1280,
+      "height_px": 720,
+      "fx_px": 900.0,
+      "fy_px": 900.0,
+      "cx_px": 640.0,
+      "cy_px": 360.0
+    }
+  ],
+  "depths_m": [
+    1.0
+  ],
+  "grid_size": 3,
+  "optics": {
+    "n_air": 1.00029,
+    "n_water": 1.333
+  },
+  "camera_count": 3,
+  "position_bounds_m": null,
+  "height_bounds_m": [
+    1.0,
+    2.0
+  ],
+  "camera_template": null,
+  "coverage_weight": 1.0,
+  "precision_weight": 0.0
+}

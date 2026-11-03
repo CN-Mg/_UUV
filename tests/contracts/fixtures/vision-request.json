@@ -1,0 +1,396 @@
+{
+  "schema_version": "1.0",
+  "coordinate_frame": "LOCAL_TANK_RH",
+  "target_id": "UUV-001",
+  "sim_time_s": 0.0,
+  "observations": [
+    {
+      "schema_version": "1.0",
+      "measurement_id": "0:UUV-001:C1:1",
+      "target_id": "UUV-001",
+      "measurement_time_s": 0.0,
+      "received_sim_time_s": 0.0,
+      "source_time_s": null,
+      "source_clock_id": null,
+      "source_frame_id": null,
+      "valid": true,
+      "camera_id": "C1",
+      "marker_id": 1,
+      "corners_px": [
+        [
+          765.966308248044,
+          244.90731990131627
+        ],
+        [
+          789.3112587109902,
+          258.4558240911191
+        ],
+        [
+          791.3743251063826,
+          242.98360679186084
+        ],
+        [
+          767.660653010586,
+          229.66319825438129
+        ]
+      ],
+      "corner_order": "bottom-left,bottom-right,top-right,top-left",
+      "pixel_noise_std_px": 0.0,
+      "observation_kind": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+      "association_kind": "SYNTHETIC_KNOWN_ASSOCIATION",
+      "refraction_mode": "FLAT_SNELL_REFRACTION"
+    },
+    {
+      "schema_version": "1.0",
+      "measurement_id": "0:UUV-001:C1:2",
+      "target_id": "UUV-001",
+      "measurement_time_s": 0.0,
+      "received_sim_time_s": 0.0,
+      "source_time_s": null,
+      "source_clock_id": null,
+      "source_frame_id": null,
+      "valid": true,
+      "camera_id": "C1",
+      "marker_id": 2,
+      "corners_px": [
+        [
+          694.306006355577,
+          128.93555494451567
+        ],
+        [
+          674.619964863177,
+          118.88154230882725
+        ],
+        [
+          655.9709672159017,
+          129.04418203708482
+        ],
+        [
+          675.6695011555166,
+          139.4592186279805
+        ]
+      ],
+      "corner_order": "bottom-left,bottom-right,top-right,top-left",
+      "pixel_noise_std_px": 0.0,
+      "observation_kind": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+      "association_kind": "SYNTHETIC_KNOWN_ASSOCIATION",
+      "refraction_mode": "FLAT_SNELL_REFRACTION"
+    },
+    {
+      "schema_version": "1.0",
+      "measurement_id": "0:UUV-001:C2:0",
+      "target_id": "UUV-001",
+      "measurement_time_s": 0.0,
+      "received_sim_time_s": 0.0,
+      "source_time_s": null,
+      "source_clock_id": null,
+      "source_frame_id": null,
+      "valid": true,
+      "camera_id": "C2",
+      "marker_id": 0,
+      "corners_px": [
+        [
+          761.7224847374465,
+          461.8842126242831
+        ],
+        [
+          785.0733436322316,
+          440.6226030000189
+        ],
+        [
+          787.7933435056211,
+          423.0432036573992
+        ],
+        [
+          764.0723331447396,
+          444.1941158389309
+        ]
+      ],
+      "corner_order": "bottom-left,bottom-right,top-right,top-left",
+      "pixel_noise_std_px": 0.0,
+      "observation_kind": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+      "association_kind": "SYNTHETIC_KNOWN_ASSOCIATION",
+      "refraction_mode": "FLAT_SNELL_REFRACTION"
+    },
+    {
+      "schema_version": "1.0",
+      "measurement_id": "0:UUV-001:C2:2",
+      "target_id": "UUV-001",
+      "measurement_time_s": 0.0,
+      "received_sim_time_s": 0.0,
+      "source_time_s": null,
+      "source_clock_id": null,
+      "source_frame_id": null,
+      "valid": true,
+      "camera_id": "C2",
+      "marker_id": 2,
+      "corners_px": [
+        [
+          872.5573070934341,
+          289.0616997441043
+        ],
+        [
+          891.718226317209,
+          273.06007786727514
+        ],
+        [
+          864.349558492712,
+          258.6019125952612
+        ],
+        [
+          845.0715242562592,
+          274.0058531156586
+        ]
+      ],
+      "corner_order": "bottom-left,bottom-right,top-right,top-left",
+      "pixel_noise_std_px": 0.0,
+      "observation_kind": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+      "association_kind": "SYNTHETIC_KNOWN_ASSOCIATION",
+      "refraction_mode": "FLAT_SNELL_REFRACTION"
+    },
+    {
+      "schema_version": "1.0",
+      "measurement_id": "0:UUV-001:C3:1",
+      "target_id": "UUV-001",
+      "measurement_time_s": 0.0,
+      "received_sim_time_s": 0.0,
+      "source_time_s": null,
+      "source_clock_id": null,
+      "source_frame_id": null,
+      "valid": true,
+      "camera_id": "C3",
+      "marker_id": 1,
+      "corners_px": [
+        [
+          495.67232775659295,
+          247.05444799084586
+        ],
+        [
+          498.7639678776432,
+          222.34495808693512
+        ],
+        [
+          496.16882475951934,
+          205.26300068558476
+        ],
+        [
+          492.92133593312747,
+          229.8055186929348
+        ]
+      ],
+      "corner_order": "bottom-left,bottom-right,top-right,top-left",
+      "pixel_noise_std_px": 0.0,
+      "observation_kind": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+      "association_kind": "SYNTHETIC_KNOWN_ASSOCIATION",
+      "refraction_mode": "FLAT_SNELL_REFRACTION"
+    },
+    {
+      "schema_version": "1.0",
+      "measurement_id": "0:UUV-001:C3:2",
+      "target_id": "UUV-001",
+      "measurement_time_s": 0.0,
+      "received_sim_time_s": 0.0,
+      "source_time_s": null,
+      "source_clock_id": null,
+      "source_frame_id": null,
+      "valid": true,
+      "camera_id": "C3",
+      "marker_id": 2,
+      "corners_px": [
+        [
+          385.54787400554153,
+          358.15034407761925
+        ],
+        [
+          378.48969503147583,
+          391.1324364514034
+        ],
+        [
+          420.01696466152487,
+          391.9484107655504
+        ],
+        [
+          425.9400083090866,
+          358.9486667574252
+        ]
+      ],
+      "corner_order": "bottom-left,bottom-right,top-right,top-left",
+      "pixel_noise_std_px": 0.0,
+      "observation_kind": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+      "association_kind": "SYNTHETIC_KNOWN_ASSOCIATION",
+      "refraction_mode": "FLAT_SNELL_REFRACTION"
+    }
+  ],
+  "calibration": {
+    "schema_version": "1.0",
+    "coordinate_frame": "LOCAL_TANK_RH",
+    "cameras": [
+      {
+        "camera_id": "C1",
+        "position_m": [
+          -2.0,
+          -2.0,
+          1.5
+        ],
+        "look_at_m": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "width_px": 1280,
+        "height_px": 720,
+        "fx_px": 900.0,
+        "fy_px": 900.0,
+        "cx_px": 640.0,
+        "cy_px": 360.0
+      },
+      {
+        "camera_id": "C2",
+        "position_m": [
+          2.0,
+          -2.0,
+          1.5
+        ],
+        "look_at_m": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "width_px": 1280,
+        "height_px": 720,
+        "fx_px": 900.0,
+        "fy_px": 900.0,
+        "cx_px": 640.0,
+        "cy_px": 360.0
+      },
+      {
+        "camera_id": "C3",
+        "position_m": [
+          0.0,
+          2.2,
+          1.5
+        ],
+        "look_at_m": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "width_px": 1280,
+        "height_px": 720,
+        "fx_px": 900.0,
+        "fy_px": 900.0,
+        "cx_px": 640.0,
+        "cy_px": 360.0
+      }
+    ],
+    "markers": [
+      {
+        "marker_id": 0,
+        "center_m": [
+          -0.27000001072883606,
+          -0.18799999356269836,
+          0.0
+        ],
+        "u_axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "v_axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "outward_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "black_square_size_m": 0.12,
+        "corner_order": "bottom-left,bottom-right,top-right,top-left"
+      },
+      {
+        "marker_id": 1,
+        "center_m": [
+          -0.27000001072883606,
+          0.18799999356269836,
+          0.0
+        ],
+        "u_axis": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "v_axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "outward_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "black_square_size_m": 0.12,
+        "corner_order": "bottom-left,bottom-right,top-right,top-left"
+      },
+      {
+        "marker_id": 2,
+        "center_m": [
+          0.47999998927116394,
+          0.0,
+          0.18799999356269836
+        ],
+        "u_axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "v_axis": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "outward_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "black_square_size_m": 0.12,
+        "corner_order": "bottom-left,bottom-right,top-right,top-left"
+      },
+      {
+        "marker_id": 3,
+        "center_m": [
+          0.47999998927116394,
+          0.0,
+          -0.18799999356269836
+        ],
+        "u_axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "v_axis": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "outward_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "black_square_size_m": 0.12,
+        "corner_order": "bottom-left,bottom-right,top-right,top-left"
+      }
+    ],
+    "optics": {
+      "n_air": 1.00029,
+      "n_water": 1.333
+    },
+    "use_refraction": true,
+    "mean_surface_z_m": 0.0
+  },
+  "prior_estimate": null
+}

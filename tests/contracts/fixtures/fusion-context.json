@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "coordinate_frame": "LOCAL_TANK_RH",
+  "anchors_world_m": {
+    "A1": [
+      0.0,
+      0.0,
+      -1.8
+    ]
+  },
+  "sensor_extrinsics": {},
+  "clock_offsets_s": {
+    "acoustic_clock": -10.0
+  },
+  "clock_scales": {},
+  "error_models": {
+    "acoustic": {
+      "distribution": "GAUSSIAN",
+      "unit": "m",
+      "stddev": 0.1,
+      "bias": 0.0,
+      "description": "未标定的接口参数",
+      "evidence_status": "DEMO_UNCALIBRATED"
+    }
+  },
+  "alignment_tolerance_s": 1e-6
+}

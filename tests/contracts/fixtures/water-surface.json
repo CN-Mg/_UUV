@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "surface_id": "water",
+  "coordinate_frame": "LOCAL_TANK_RH",
+  "sim_time_s": 0.0,
+  "rows": 2,
+  "columns": 2,
+  "x_bounds_m": [
+    -2.5,
+    2.5
+  ],
+  "y_bounds_m": [
+    -2.5,
+    2.5
+  ],
+  "heights_m": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "normals_world": [
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "model_kind": "flat_surface_v1",
+  "evidence_status": "DEMO_UNCALIBRATED"
+}

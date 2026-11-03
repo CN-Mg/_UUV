@@ -1,0 +1,71 @@
+{
+  "evidence_status": "DEMO_UNCALIBRATED",
+  "python_executable": "D:\\_DownloadDeepLearning\\Anaconda\\envs\\UUV\\python.exe",
+  "preregistered_cases": [
+    [
+      "ideal",
+      "IDEAL_NO_REFRACTION",
+      0.0,
+      20261102,
+      0.0
+    ],
+    [
+      "flat",
+      "FLAT_SNELL_REFRACTION",
+      0.0,
+      20261102,
+      0.0
+    ],
+    [
+      "wave-0.01-20261102",
+      "WAVY_SNELL_REFRACTION",
+      0.01,
+      20261102,
+      0.0
+    ],
+    [
+      "wave-0.01-20261103",
+      "WAVY_SNELL_REFRACTION",
+      0.01,
+      20261103,
+      0.0
+    ],
+    [
+      "wave-0.01-20261104",
+      "WAVY_SNELL_REFRACTION",
+      0.01,
+      20261104,
+      0.0
+    ],
+    [
+      "wave-0.02-20261102",
+      "WAVY_SNELL_REFRACTION",
+      0.02,
+      20261102,
+      0.0
+    ],
+    [
+      "wave-0.02-20261103",
+      "WAVY_SNELL_REFRACTION",
+      0.02,
+      20261103,
+      0.0
+    ],
+    [
+      "wave-0.02-20261104",
+      "WAVY_SNELL_REFRACTION",
+      0.02,
+      20261104,
+      0.0
+    ],
+    [
+      "pixel-noise",
+      "FLAT_SNELL_REFRACTION",
+      0.0,
+      20261102,
+      0.5
+    ]
+  ],
+  "duration_s": 3.0,
+  "results": []
+}

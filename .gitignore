@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+frontend/node_modules/
+frontend/dist/
+data/index.sqlite3*
+data/runs/*
+!data/runs/.gitkeep
+output/playwright/
+.playwright-cli/
+~$*

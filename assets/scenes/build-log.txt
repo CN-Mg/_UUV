@@ -1,0 +1,405 @@
+D:\_UUV\tools\build_m1_scene.py:32: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  result.use_nodes = True
+BlenderMCP addon registered
+INFO Draco is available, use library at F:\SteamLibrary\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at F:\SteamLibrary\steamapps\common\Blender\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+21:11:48 | INFO: Starting glTF 2.0 export
+21:11:48 | INFO: Extracting primitive: 立方体.008
+21:11:48 | INFO: Primitives created: 1
+21:11:48 | INFO: Extracting primitive: 立方体.007
+21:11:48 | INFO: Primitives created: 1
+21:11:48 | INFO: Extracting primitive: 柱体.030
+21:11:48 | INFO: Primitives created: 1
+21:11:48 | INFO: Extracting primitive: 柱体.031
+21:11:48 | INFO: Primitives created: 1
+21:11:48 | INFO: Extracting primitive: 立方体.009
+21:11:48 | INFO: Primitives created: 1
+21:11:48 | INFO: Finished glTF 2.0 export in 0.02527308464050293 s
+
+21:11:48 | INFO: Data are loaded, start creating Blender stuff
+21:11:48 | INFO: Blender create Mesh node Marker_0
+21:11:48 | INFO: Blender create Mesh node Marker_1
+21:11:48 | INFO: Blender create Mesh node Marker_2
+21:11:48 | INFO: Blender create Mesh node Marker_3
+21:11:48 | INFO: Blender create Mesh node 立方体
+21:11:48 | INFO: Blender create Mesh node 立方体.001
+21:11:48 | INFO: Blender create Mesh node 立方体.002
+21:11:48 | INFO: Blender create Mesh node 立方体.003
+21:11:48 | INFO: Blender create Mesh node 球体.005
+21:11:48 | INFO: Blender create Mesh node 立方体.004
+21:11:48 | INFO: Blender create Mesh node 立方体.005
+21:11:48 | INFO: Blender create Mesh node 柱体
+21:11:48 | INFO: Blender create Mesh node 柱体.001
+21:11:48 | INFO: Blender create Mesh node 柱体.002
+21:11:48 | INFO: Blender create Mesh node 立方体.006
+21:11:48 | INFO: Blender create Mesh node 柱体.008
+21:11:48 | INFO: Blender create Mesh node 柱体.007
+21:11:48 | INFO: Blender create Mesh node Port identification
+21:11:48 | INFO: Blender create Mesh node 球体.002
+21:11:48 | INFO: Blender create Mesh node 球体.003
+21:11:48 | INFO: Blender create Mesh node 球体.004
+21:11:48 | INFO: Blender create Mesh node 环体
+21:11:48 | INFO: Blender create Mesh node 柱体.006
+21:11:48 | INFO: Blender create Mesh node 球体
+21:11:48 | INFO: Blender create Mesh node Starboard identification
+21:11:48 | INFO: Blender create Mesh node 柱体.005
+21:11:48 | INFO: Blender create Mesh node 球体.001
+21:11:48 | INFO: Blender create Mesh node 柱体.003
+21:11:48 | INFO: Blender create Mesh node 柱体.004
+21:11:48 | INFO: glTF import finished in 0.12s
+D:\_UUV\tools\build_m1_scene.py:260: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+21:11:49 | INFO: Starting glTF 2.0 export
+21:11:49 | INFO: Extracting primitive: 立方体.008
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.007
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.030
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.031
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.009
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: depth_label
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.034
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.036
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.038
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.040
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.033
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.035
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.037
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.039
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.043
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.045
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.047
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.049
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.042
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.044
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.046
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.048
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.052
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.054
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.056
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.058
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.051
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.053
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.055
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.057
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: label_C1
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: label_C2
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: label_C3
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: stage_title
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: stage_warning
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.010
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.032
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.011
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.041
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.012
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.050
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.023
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.025
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.027
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.029
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.002
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.004
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.006
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.008
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.010
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.012
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.014
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.016
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.018
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.020
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.001
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.003
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.005
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.007
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.009
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.011
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.013
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.015
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.017
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.019
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.021
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.001
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.022
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.024
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.026
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.028
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.004
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.002
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.005
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.003
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.006
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.068
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.069
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.070
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.071
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.072
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.073
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.074
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.075
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.076
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.077
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.078
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.079
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.080
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.081
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.082
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.083
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.084
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.085
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.086
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.087
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.088
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.089
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.090
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.091
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.092
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.093
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.094
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.095
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.096
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.097
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.098
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.099
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.100
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.101
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.102
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.103
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.104
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.105
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.106
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.107
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.108
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.109
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.110
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.111
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.112
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.113
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.114
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.115
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.116
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.117
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.118
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.119
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.120
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.121
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.122
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.123
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.124
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.125
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.126
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.127
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.128
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.129
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.130
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.131
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: Marker_0
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: Marker_1
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: Marker_2
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: Marker_3
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.013
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.014
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.015
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.016
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 球体.005
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.017
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.018
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.059
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.060
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.061
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 立方体.019
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.062
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.063
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: Port identification
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 球体.002
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 球体.003
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 球体.004
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 环体
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.064
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 球体
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: Starboard identification
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.065
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 球体.001
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.066
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Extracting primitive: 柱体.067
+21:11:49 | INFO: Primitives created: 1
+21:11:49 | INFO: Finished glTF 2.0 export in 0.4485783576965332 s
+00:02.640  reports          | WARNING 路径 'F:\SteamLibrary\steamapps\common\Blender\5.2\datafiles\assets\brushes\essentials_brushes-gp_draw.blend' 不能成为 Material 'Dots Stroke' 的相对路径
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:37:16)
+00:02.640  reports          | WARNING 路径 'F:\SteamLibrary\steamapps\common\Blender\5.2\datafiles\assets\brushes\essentials_brushes-gp_draw.blend' 不能成为 Material 'Material' 的相对路径
+00:04.343  render           | Saved: 'D:\_UUV\assets\scenes\m1_tank_preview.png'
+
+信息: 已另存为 "m1_tank_scene.blend"
+M1_SCENE_BUILD_COMPLETE {"objects": 197, "sources_unchanged": true, "engine": "BLENDER_EEVEE", "output": "D:\\_UUV\\assets\\scenes"}
+BlenderMCP addon unregistered
+
+Blender quit

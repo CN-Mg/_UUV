@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0",
+  "evidence_status": "DEMO_UNCALIBRATED",
+  "coordinate_frame": "LOCAL_TANK_RH",
+  "units": "m",
+  "tank_dimensions_m": [
+    5.0,
+    5.0,
+    2.0
+  ],
+  "mean_surface_z_m": 0.0,
+  "blender_to_gltf": "(x,y,z)_gltf=(x,z,-y)_blender",
+  "gltf_to_local_tank": "wrapper.rotation.x=+pi/2",
+  "camera_unit_local_axes": {
+    "right": "+X",
+    "up": "+Y",
+    "optical_forward": "-Z"
+  },
+  "camera_roots": {
+    "camera_C1": {
+      "camera_id": "C1",
+      "position_m": [
+        -2.0,
+        -2.0,
+        1.5
+      ],
+      "look_at_m": [
+        0,
+        0,
+        -1
+      ]
+    },
+    "camera_C2": {
+      "camera_id": "C2",
+      "position_m": [
+        2.0,
+        -2.0,
+        1.5
+      ],
+      "look_at_m": [
+        0,
+        0,
+        -1
+      ]
+    },
+    "camera_C3": {
+      "camera_id": "C3",
+      "position_m": [
+        0.0,
+        2.2,
+        1.5
+      ],
+      "look_at_m": [
+        0,
+        0,
+        -1
+      ]
+    }
+  },
+  "frontend_hide_roots": [
+    "camera_C1",
+    "camera_C2",
+    "camera_C3",
+    "stand_C1",
+    "stand_C2",
+    "stand_C3",
+    "frustum_C1",
+    "frustum_C2",
+    "frustum_C3",
+    "label_C1",
+    "label_C2",
+    "label_C3",
+    "uuv_demo",
+    "trajectory_schematic"
+  ],
+  "camera_control": "Outer group at configured tank position, quaternion copied from THREE.Camera lookAt; inner GLB wrapper rotation.x=pi/2.",
+  "runtime_authority": "Camera edits preview display, then submit effective config for a new backend run; running config is immutable.",
+  "limitations": [
+    "Geometry and camera housing are schematic, not measured hardware",
+    "Mean-plane water rendering does not compute optical propagation",
+    "Frusta show air-side pinhole geometry, not refracted coverage",
+    "No hydrodynamics or image detection"
+  ],
+  "source_asset_hashes_sha256": {
+    "assets\\models\\README.md": "8d71baa0a385de38e9db3c1bfe6d870d94d78ead3f1c2906837d5c689cf07f6a",
+    "assets\\models\\textures\\aruco_4x4_50_000.png": "ee50e6f4167f64d9805dda50191d10c5ec688e2ea86a1f67a8165faf64500212",
+    "assets\\models\\textures\\aruco_4x4_50_001.png": "9971eabd565ef6176d670b8892ba4e6efb4c8b7d7c13b569de1b3a6886fa68dc",
+    "assets\\models\\textures\\aruco_4x4_50_002.png": "8b815e1c468da1cac6231cb7d05f2b421b1d01492c11bc37861f6c125b5c69a9",
+    "assets\\models\\textures\\aruco_4x4_50_003.png": "9721d57368ad36bdf079fa6e13773078bc3da7db2af97322c47a2fcb3699edf8",
+    "assets\\models\\uuv_001.blend": "d0846b9c1b469462519a3d5dc2438ca058086e0674ffd8199313e653d3c662e5",
+    "assets\\models\\uuv_001.glb": "89c0936639c683da9b793208cc32b11ac2f5d789a87f26d184686b00e4f49c66",
+    "assets\\models\\uuv_001_metadata.json": "f2295c39f6053a5ee647fefaf3eb78d04bcb56de9fa8b3e1c38eb2511f007d3f",
+    "assets\\models\\uuv_001_preview.png": "f024ac2184737674d45e7b7476ae990afb18082e1421eb9510eec78b73474262"
+  },
+  "blender_version": "5.2.3 LTS"
+}

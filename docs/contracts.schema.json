@@ -1,0 +1,5721 @@
+{
+  "AcousticRangeObservation": {
+    "additionalProperties": false,
+    "description": "距离不是三维坐标；锚点位置由 FusionContext 给出。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "measurement_id": {
+        "title": "Measurement Id",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "measurement_time_s": {
+        "minimum": 0,
+        "title": "Measurement Time S",
+        "type": "number"
+      },
+      "received_sim_time_s": {
+        "minimum": 0,
+        "title": "Received Sim Time S",
+        "type": "number"
+      },
+      "source_time_s": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Time S"
+      },
+      "source_clock_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Clock Id"
+      },
+      "source_frame_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Frame Id"
+      },
+      "valid": {
+        "default": true,
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "anchor_id": {
+        "title": "Anchor Id",
+        "type": "string"
+      },
+      "range_m": {
+        "minimum": 0,
+        "title": "Range M",
+        "type": "number"
+      },
+      "variance_m2": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Variance M2"
+      }
+    },
+    "required": [
+      "measurement_id",
+      "target_id",
+      "measurement_time_s",
+      "received_sim_time_s",
+      "anchor_id",
+      "range_m"
+    ],
+    "title": "AcousticRangeObservation",
+    "type": "object"
+  },
+  "AdapterDescriptor": {
+    "additionalProperties": false,
+    "description": "注册时声明能力和版本，不能把占位角色等同于实际能力。",
+    "properties": {
+      "role": {
+        "enum": [
+          "layout",
+          "vision",
+          "refraction",
+          "wave",
+          "acoustic",
+          "fusion"
+        ],
+        "title": "Role",
+        "type": "string"
+      },
+      "algorithm_id": {
+        "title": "Algorithm Id",
+        "type": "string"
+      },
+      "algorithm_version": {
+        "title": "Algorithm Version",
+        "type": "string"
+      },
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "supported_schema_versions": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Supported Schema Versions",
+        "type": "array"
+      },
+      "capabilities": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Capabilities",
+        "type": "array"
+      },
+      "status": {
+        "default": "BASELINE",
+        "title": "Status",
+        "type": "string"
+      },
+      "evidence_status": {
+        "const": "DEMO_UNCALIBRATED",
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      }
+    },
+    "required": [
+      "role",
+      "algorithm_id",
+      "algorithm_version"
+    ],
+    "title": "AdapterDescriptor",
+    "type": "object"
+  },
+  "AdapterSelection": {
+    "additionalProperties": false,
+    "description": "显式注册表中的算法 ID；不接受任意 Python 路径。",
+    "properties": {
+      "layout": {
+        "default": "fixed_layout_v1",
+        "title": "Layout",
+        "type": "string"
+      },
+      "vision": {
+        "default": "flat_snell_baseline_v1",
+        "title": "Vision",
+        "type": "string"
+      },
+      "refraction": {
+        "default": "snell_single_interface_v1",
+        "title": "Refraction",
+        "type": "string"
+      },
+      "wave": {
+        "default": "seeded_multisine_v1",
+        "title": "Wave",
+        "type": "string"
+      },
+      "acoustic": {
+        "default": "buffered_ranges_v1",
+        "title": "Acoustic",
+        "type": "string"
+      },
+      "fusion": {
+        "default": "noop_fusion_v1",
+        "title": "Fusion",
+        "type": "string"
+      }
+    },
+    "title": "AdapterSelection",
+    "type": "object"
+  },
+  "BackprojectionRequest": {
+    "$defs": {
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "OpticsConfig": {
+        "additionalProperties": false,
+        "description": "单一水空气界面的折射率。",
+        "properties": {
+          "n_air": {
+            "default": 1.00029,
+            "description": "空气折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Air",
+            "type": "number"
+          },
+          "n_water": {
+            "default": 1.333,
+            "description": "水折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Water",
+            "type": "number"
+          }
+        },
+        "title": "OpticsConfig",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "像素沿光路反投影到水中射线。",
+    "properties": {
+      "pixel_px": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Pixel Px",
+        "type": "array"
+      },
+      "camera": {
+        "$ref": "#/$defs/CameraCalibration"
+      },
+      "sim_time_s": {
+        "default": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "optics": {
+        "$ref": "#/$defs/OpticsConfig"
+      }
+    },
+    "required": [
+      "pixel_px",
+      "camera"
+    ],
+    "title": "BackprojectionRequest",
+    "type": "object"
+  },
+  "CalibrationContext": {
+    "$defs": {
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "MarkerGeometry": {
+        "additionalProperties": false,
+        "description": "标记机体系标定信息，不含世界真值角点。",
+        "properties": {
+          "marker_id": {
+            "title": "Marker Id",
+            "type": "integer"
+          },
+          "center_m": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Center M",
+            "type": "array"
+          },
+          "u_axis": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "U Axis",
+            "type": "array"
+          },
+          "v_axis": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "V Axis",
+            "type": "array"
+          },
+          "outward_normal": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Outward Normal",
+            "type": "array"
+          },
+          "black_square_size_m": {
+            "default": 0.12,
+            "description": "黑色编码方块边长 m，不含白色静区",
+            "exclusiveMinimum": 0,
+            "title": "Black Square Size M",
+            "type": "number"
+          },
+          "corner_order": {
+            "default": "bottom-left,bottom-right,top-right,top-left",
+            "title": "Corner Order",
+            "type": "string"
+          }
+        },
+        "required": [
+          "marker_id",
+          "center_m",
+          "u_axis",
+          "v_axis",
+          "outward_normal"
+        ],
+        "title": "MarkerGeometry",
+        "type": "object"
+      },
+      "OpticsConfig": {
+        "additionalProperties": false,
+        "description": "单一水空气界面的折射率。",
+        "properties": {
+          "n_air": {
+            "default": 1.00029,
+            "description": "空气折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Air",
+            "type": "number"
+          },
+          "n_water": {
+            "default": 1.333,
+            "description": "水折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Water",
+            "type": "number"
+          }
+        },
+        "title": "OpticsConfig",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "白名单标定上下文：没有场景、轨迹、种子或瞬时真实波面。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "cameras": {
+        "items": {
+          "$ref": "#/$defs/CameraCalibration"
+        },
+        "title": "Cameras",
+        "type": "array"
+      },
+      "markers": {
+        "items": {
+          "$ref": "#/$defs/MarkerGeometry"
+        },
+        "title": "Markers",
+        "type": "array"
+      },
+      "optics": {
+        "$ref": "#/$defs/OpticsConfig"
+      },
+      "use_refraction": {
+        "default": true,
+        "title": "Use Refraction",
+        "type": "boolean"
+      },
+      "mean_surface_z_m": {
+        "const": 0.0,
+        "default": 0.0,
+        "title": "Mean Surface Z M",
+        "type": "number"
+      }
+    },
+    "required": [
+      "cameras",
+      "markers"
+    ],
+    "title": "CalibrationContext",
+    "type": "object"
+  },
+  "CameraCalibration": {
+    "additionalProperties": false,
+    "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+    "properties": {
+      "camera_id": {
+        "description": "相机唯一标识",
+        "title": "Camera Id",
+        "type": "string"
+      },
+      "position_m": {
+        "description": "相机光心世界坐标 m",
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Position M",
+        "type": "array"
+      },
+      "look_at_m": {
+        "default": [
+          0,
+          0,
+          -1
+        ],
+        "description": "光轴指向的世界坐标 m",
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Look At M",
+        "type": "array"
+      },
+      "width_px": {
+        "default": 1280,
+        "description": "图像宽度 px",
+        "exclusiveMinimum": 0,
+        "title": "Width Px",
+        "type": "integer"
+      },
+      "height_px": {
+        "default": 720,
+        "description": "图像高度 px",
+        "exclusiveMinimum": 0,
+        "title": "Height Px",
+        "type": "integer"
+      },
+      "fx_px": {
+        "default": 900,
+        "description": "水平焦距 px",
+        "exclusiveMinimum": 0,
+        "title": "Fx Px",
+        "type": "number"
+      },
+      "fy_px": {
+        "default": 900,
+        "description": "垂直焦距 px",
+        "exclusiveMinimum": 0,
+        "title": "Fy Px",
+        "type": "number"
+      },
+      "cx_px": {
+        "default": 640,
+        "description": "主点横坐标 px",
+        "title": "Cx Px",
+        "type": "number"
+      },
+      "cy_px": {
+        "default": 360,
+        "description": "主点纵坐标 px",
+        "title": "Cy Px",
+        "type": "number"
+      }
+    },
+    "required": [
+      "camera_id",
+      "position_m"
+    ],
+    "title": "CameraCalibration",
+    "type": "object"
+  },
+  "CameraObservation": {
+    "additionalProperties": false,
+    "description": "解析已知关联角点，只传最终像素，不传理想像素和世界角点。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "measurement_id": {
+        "title": "Measurement Id",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "measurement_time_s": {
+        "minimum": 0,
+        "title": "Measurement Time S",
+        "type": "number"
+      },
+      "received_sim_time_s": {
+        "minimum": 0,
+        "title": "Received Sim Time S",
+        "type": "number"
+      },
+      "source_time_s": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Time S"
+      },
+      "source_clock_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Clock Id"
+      },
+      "source_frame_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Frame Id"
+      },
+      "valid": {
+        "default": true,
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "camera_id": {
+        "title": "Camera Id",
+        "type": "string"
+      },
+      "marker_id": {
+        "title": "Marker Id",
+        "type": "integer"
+      },
+      "corners_px": {
+        "items": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        "maxItems": 4,
+        "minItems": 4,
+        "title": "Corners Px",
+        "type": "array"
+      },
+      "corner_order": {
+        "const": "bottom-left,bottom-right,top-right,top-left",
+        "default": "bottom-left,bottom-right,top-right,top-left",
+        "title": "Corner Order",
+        "type": "string"
+      },
+      "pixel_noise_std_px": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Pixel Noise Std Px",
+        "type": "number"
+      },
+      "observation_kind": {
+        "const": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+        "default": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+        "title": "Observation Kind",
+        "type": "string"
+      },
+      "association_kind": {
+        "const": "SYNTHETIC_KNOWN_ASSOCIATION",
+        "default": "SYNTHETIC_KNOWN_ASSOCIATION",
+        "title": "Association Kind",
+        "type": "string"
+      },
+      "refraction_mode": {
+        "default": "IDEAL_NO_REFRACTION",
+        "enum": [
+          "IDEAL_NO_REFRACTION",
+          "FLAT_SNELL_REFRACTION",
+          "WAVY_SNELL_REFRACTION"
+        ],
+        "title": "Refraction Mode",
+        "type": "string"
+      }
+    },
+    "required": [
+      "measurement_id",
+      "target_id",
+      "measurement_time_s",
+      "received_sim_time_s",
+      "camera_id",
+      "marker_id",
+      "corners_px"
+    ],
+    "title": "CameraObservation",
+    "type": "object"
+  },
+  "CommunicationObservation": {
+    "additionalProperties": false,
+    "description": "状态或有来源的位置消息，避免把转发视觉当独立测量。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "measurement_id": {
+        "title": "Measurement Id",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "measurement_time_s": {
+        "minimum": 0,
+        "title": "Measurement Time S",
+        "type": "number"
+      },
+      "received_sim_time_s": {
+        "minimum": 0,
+        "title": "Received Sim Time S",
+        "type": "number"
+      },
+      "source_time_s": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Time S"
+      },
+      "source_clock_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Clock Id"
+      },
+      "source_frame_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Frame Id"
+      },
+      "valid": {
+        "default": true,
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "source_id": {
+        "title": "Source Id",
+        "type": "string"
+      },
+      "message_type": {
+        "default": "STATUS",
+        "title": "Message Type",
+        "type": "string"
+      },
+      "message": {
+        "default": "",
+        "title": "Message",
+        "type": "string"
+      },
+      "position_m": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position M"
+      },
+      "position_covariance_m2": {
+        "anyOf": [
+          {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position Covariance M2"
+      },
+      "derived_from_measurement_ids": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Derived From Measurement Ids",
+        "type": "array"
+      },
+      "position_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Position Frame",
+        "type": "string"
+      }
+    },
+    "required": [
+      "measurement_id",
+      "target_id",
+      "measurement_time_s",
+      "received_sim_time_s",
+      "source_id"
+    ],
+    "title": "CommunicationObservation",
+    "type": "object"
+  },
+  "EvaluationSample": {
+    "additionalProperties": false,
+    "description": "后端计算的独立评价样本；失败帧仍计入总样本。",
+    "properties": {
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "algorithm_id": {
+        "title": "Algorithm Id",
+        "type": "string"
+      },
+      "valid": {
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "error_m": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Error M"
+      },
+      "position_error_m": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position Error M"
+      },
+      "horizontal_error_m": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Horizontal Error M"
+      },
+      "depth_error_m": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Depth Error M"
+      },
+      "status": {
+        "title": "Status",
+        "type": "string"
+      },
+      "evidence_status": {
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      },
+      "tick_index": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Tick Index",
+        "type": "integer"
+      },
+      "filter_lag_nominal_s": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Filter Lag Nominal S",
+        "type": "number"
+      }
+    },
+    "required": [
+      "target_id",
+      "algorithm_id",
+      "valid",
+      "status"
+    ],
+    "title": "EvaluationSample",
+    "type": "object"
+  },
+  "EventEnvelope": {
+    "additionalProperties": false,
+    "description": "JSONL、REST 和 WebSocket 共用事件外壳。",
+    "properties": {
+      "scenario_id": {
+        "title": "Scenario Id",
+        "type": "string"
+      },
+      "run_id": {
+        "title": "Run Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "event_seq": {
+        "minimum": 0,
+        "title": "Event Seq",
+        "type": "integer"
+      },
+      "event_type": {
+        "title": "Event Type",
+        "type": "string"
+      },
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "payload": {
+        "additionalProperties": true,
+        "title": "Payload",
+        "type": "object"
+      }
+    },
+    "required": [
+      "scenario_id",
+      "run_id",
+      "sim_time_s",
+      "event_seq",
+      "event_type",
+      "payload"
+    ],
+    "title": "EventEnvelope",
+    "type": "object"
+  },
+  "ExperimentConfig": {
+    "additionalProperties": false,
+    "description": "对同一观测批次运行的独立对照估计器。",
+    "properties": {
+      "comparison_vision_ids": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Comparison Vision Ids",
+        "type": "array"
+      }
+    },
+    "title": "ExperimentConfig",
+    "type": "object"
+  },
+  "FusionBatch": {
+    "$defs": {
+      "AcousticRangeObservation": {
+        "additionalProperties": false,
+        "description": "距离不是三维坐标；锚点位置由 FusionContext 给出。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "measurement_id": {
+            "title": "Measurement Id",
+            "type": "string"
+          },
+          "target_id": {
+            "title": "Target Id",
+            "type": "string"
+          },
+          "measurement_time_s": {
+            "minimum": 0,
+            "title": "Measurement Time S",
+            "type": "number"
+          },
+          "received_sim_time_s": {
+            "minimum": 0,
+            "title": "Received Sim Time S",
+            "type": "number"
+          },
+          "source_time_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Time S"
+          },
+          "source_clock_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Clock Id"
+          },
+          "source_frame_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Frame Id"
+          },
+          "valid": {
+            "default": true,
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "anchor_id": {
+            "title": "Anchor Id",
+            "type": "string"
+          },
+          "range_m": {
+            "minimum": 0,
+            "title": "Range M",
+            "type": "number"
+          },
+          "variance_m2": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Variance M2"
+          }
+        },
+        "required": [
+          "measurement_id",
+          "target_id",
+          "measurement_time_s",
+          "received_sim_time_s",
+          "anchor_id",
+          "range_m"
+        ],
+        "title": "AcousticRangeObservation",
+        "type": "object"
+      },
+      "CommunicationObservation": {
+        "additionalProperties": false,
+        "description": "状态或有来源的位置消息，避免把转发视觉当独立测量。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "measurement_id": {
+            "title": "Measurement Id",
+            "type": "string"
+          },
+          "target_id": {
+            "title": "Target Id",
+            "type": "string"
+          },
+          "measurement_time_s": {
+            "minimum": 0,
+            "title": "Measurement Time S",
+            "type": "number"
+          },
+          "received_sim_time_s": {
+            "minimum": 0,
+            "title": "Received Sim Time S",
+            "type": "number"
+          },
+          "source_time_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Time S"
+          },
+          "source_clock_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Clock Id"
+          },
+          "source_frame_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Frame Id"
+          },
+          "valid": {
+            "default": true,
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "message_type": {
+            "default": "STATUS",
+            "title": "Message Type",
+            "type": "string"
+          },
+          "message": {
+            "default": "",
+            "title": "Message",
+            "type": "string"
+          },
+          "position_m": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Position M"
+          },
+          "position_covariance_m2": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Position Covariance M2"
+          },
+          "derived_from_measurement_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Derived From Measurement Ids",
+            "type": "array"
+          },
+          "position_frame": {
+            "const": "LOCAL_TANK_RH",
+            "default": "LOCAL_TANK_RH",
+            "title": "Position Frame",
+            "type": "string"
+          }
+        },
+        "required": [
+          "measurement_id",
+          "target_id",
+          "measurement_time_s",
+          "received_sim_time_s",
+          "source_id"
+        ],
+        "title": "CommunicationObservation",
+        "type": "object"
+      },
+      "VisionEstimate": {
+        "additionalProperties": false,
+        "description": "水平航行基线估计 xyz+yaw，协方差未知时为空。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "coordinate_frame": {
+            "const": "LOCAL_TANK_RH",
+            "default": "LOCAL_TANK_RH",
+            "title": "Coordinate Frame",
+            "type": "string"
+          },
+          "target_id": {
+            "title": "Target Id",
+            "type": "string"
+          },
+          "sim_time_s": {
+            "minimum": 0,
+            "title": "Sim Time S",
+            "type": "number"
+          },
+          "algorithm_id": {
+            "title": "Algorithm Id",
+            "type": "string"
+          },
+          "algorithm_version": {
+            "default": "1.0.0",
+            "title": "Algorithm Version",
+            "type": "string"
+          },
+          "valid": {
+            "default": false,
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "status": {
+            "default": "NO_OBSERVATION",
+            "title": "Status",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "title": "Reason",
+            "type": "string"
+          },
+          "position_m": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Position M"
+          },
+          "yaw_rad": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Yaw Rad"
+          },
+          "orientation_wxyz": {
+            "anyOf": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Orientation Wxyz"
+          },
+          "estimated_dofs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Estimated Dofs",
+            "type": "array"
+          },
+          "position_covariance_m2": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Position Covariance M2"
+          },
+          "reprojection_rmse_px": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reprojection Rmse Px"
+          },
+          "used_measurement_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Used Measurement Ids",
+            "type": "array"
+          },
+          "evidence_status": {
+            "default": "DEMO_UNCALIBRATED",
+            "title": "Evidence Status",
+            "type": "string"
+          },
+          "correction_status": {
+            "default": "MODEL_AWARE_DEMO",
+            "title": "Correction Status",
+            "type": "string"
+          },
+          "filter_lag_nominal_s": {
+            "default": 0,
+            "title": "Filter Lag Nominal S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "target_id",
+          "sim_time_s",
+          "algorithm_id"
+        ],
+        "title": "VisionEstimate",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "各测量保留自己的时刻，融合器负责参考时刻的一致性。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "minimum": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "vision": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/VisionEstimate"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "acoustic": {
+        "items": {
+          "$ref": "#/$defs/AcousticRangeObservation"
+        },
+        "title": "Acoustic",
+        "type": "array"
+      },
+      "communication": {
+        "items": {
+          "$ref": "#/$defs/CommunicationObservation"
+        },
+        "title": "Communication",
+        "type": "array"
+      }
+    },
+    "required": [
+      "target_id",
+      "sim_time_s"
+    ],
+    "title": "FusionBatch",
+    "type": "object"
+  },
+  "FusionContext": {
+    "$defs": {
+      "ObservationErrorModel": {
+        "additionalProperties": false,
+        "description": "同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
+        "properties": {
+          "distribution": {
+            "default": "UNSPECIFIED",
+            "enum": [
+              "UNSPECIFIED",
+              "GAUSSIAN",
+              "EMPIRICAL"
+            ],
+            "title": "Distribution",
+            "type": "string"
+          },
+          "unit": {
+            "default": "m",
+            "enum": [
+              "m",
+              "px",
+              "s",
+              "m/s",
+              "dimensionless"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "stddev": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "标量标准差；未知为空",
+            "title": "Stddev"
+          },
+          "bias": {
+            "default": 0,
+            "description": "同单位的已知常偏；默认未标定零值",
+            "title": "Bias",
+            "type": "number"
+          },
+          "description": {
+            "default": "未标定的接口参数",
+            "title": "Description",
+            "type": "string"
+          },
+          "evidence_status": {
+            "const": "DEMO_UNCALIBRATED",
+            "default": "DEMO_UNCALIBRATED",
+            "title": "Evidence Status",
+            "type": "string"
+          }
+        },
+        "title": "ObservationErrorModel",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "融合标定；已知时钟映射为 t_sim=scale*t_source+offset，不估计设备时钟。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "anchors_world_m": {
+        "additionalProperties": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        "title": "Anchors World M",
+        "type": "object"
+      },
+      "sensor_extrinsics": {
+        "additionalProperties": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "description": "T_world_sensor，4×4 刚体变换",
+        "title": "Sensor Extrinsics",
+        "type": "object"
+      },
+      "clock_offsets_s": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "description": "设备时钟到仿真时钟偏移 s",
+        "title": "Clock Offsets S",
+        "type": "object"
+      },
+      "clock_scales": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "description": "设备时钟到仿真时钟比例，默认 1",
+        "title": "Clock Scales",
+        "type": "object"
+      },
+      "error_models": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ObservationErrorModel"
+        },
+        "title": "Error Models",
+        "type": "object"
+      },
+      "alignment_tolerance_s": {
+        "default": 1e-06,
+        "description": "校验已映射时间的一致性容差 s",
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Alignment Tolerance S",
+        "type": "number"
+      }
+    },
+    "title": "FusionContext",
+    "type": "object"
+  },
+  "FusionEstimate": {
+    "additionalProperties": false,
+    "description": "透传不代表融合；列出实际使用的来源。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "minimum": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "algorithm_id": {
+        "title": "Algorithm Id",
+        "type": "string"
+      },
+      "algorithm_version": {
+        "default": "1.0.0",
+        "title": "Algorithm Version",
+        "type": "string"
+      },
+      "valid": {
+        "default": false,
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "status": {
+        "default": "NO_OBSERVATION",
+        "title": "Status",
+        "type": "string"
+      },
+      "reason": {
+        "default": "",
+        "title": "Reason",
+        "type": "string"
+      },
+      "position_m": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position M"
+      },
+      "yaw_rad": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Yaw Rad"
+      },
+      "orientation_wxyz": {
+        "anyOf": [
+          {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Orientation Wxyz"
+      },
+      "estimated_dofs": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Estimated Dofs",
+        "type": "array"
+      },
+      "position_covariance_m2": {
+        "anyOf": [
+          {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position Covariance M2"
+      },
+      "reprojection_rmse_px": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reprojection Rmse Px"
+      },
+      "used_measurement_ids": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Used Measurement Ids",
+        "type": "array"
+      },
+      "evidence_status": {
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      },
+      "correction_status": {
+        "default": "MODEL_AWARE_DEMO",
+        "title": "Correction Status",
+        "type": "string"
+      },
+      "filter_lag_nominal_s": {
+        "default": 0,
+        "title": "Filter Lag Nominal S",
+        "type": "number"
+      },
+      "fusion_status": {
+        "default": "PASSTHROUGH_NOT_FUSED",
+        "title": "Fusion Status",
+        "type": "string"
+      },
+      "used_sources": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Used Sources",
+        "type": "array"
+      },
+      "received_measurement_types": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Received Measurement Types",
+        "type": "array"
+      }
+    },
+    "required": [
+      "target_id",
+      "sim_time_s",
+      "algorithm_id"
+    ],
+    "title": "FusionEstimate",
+    "type": "object"
+  },
+  "LayoutEvaluation": {
+    "$defs": {
+      "PrecisionMetric": {
+        "additionalProperties": false,
+        "description": "正式布局模块可输出的声明性精度指标，M1 基线不伪造该数值。",
+        "properties": {
+          "kind": {
+            "enum": [
+              "GEOMETRIC_PROXY",
+              "LINEARIZED_COVARIANCE"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "minimum": 0,
+            "title": "Value",
+            "type": "number"
+          },
+          "unit": {
+            "enum": [
+              "m",
+              "m2",
+              "dimensionless"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "assumptions": {
+            "description": "噪声、线性化位置、姿态、聚合方法等假设",
+            "minLength": 1,
+            "title": "Assumptions",
+            "type": "string"
+          },
+          "pixel_stddev_px": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Pixel Stddev Px"
+          }
+        },
+        "required": [
+          "kind",
+          "value",
+          "unit",
+          "assumptions"
+        ],
+        "title": "PrecisionMetric",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "水中段射线的交会角和几何点覆盖，全部属于未标定演示。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "single_view_coverage": {
+        "default": 0,
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Single View Coverage",
+        "type": "number"
+      },
+      "multi_view_coverage": {
+        "default": 0,
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Multi View Coverage",
+        "type": "number"
+      },
+      "median_intersection_angle_rad": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Median Intersection Angle Rad"
+      },
+      "invalid_point_count": {
+        "default": 0,
+        "title": "Invalid Point Count",
+        "type": "integer"
+      },
+      "sample_count": {
+        "default": 0,
+        "title": "Sample Count",
+        "type": "integer"
+      },
+      "metric_kind": {
+        "default": "GEOMETRIC_POINT_COVERAGE",
+        "title": "Metric Kind",
+        "type": "string"
+      },
+      "evidence_status": {
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      },
+      "precision_metric": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PrecisionMetric"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "title": "LayoutEvaluation",
+    "type": "object"
+  },
+  "LayoutEvaluationRequest": {
+    "$defs": {
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "OpticsConfig": {
+        "additionalProperties": false,
+        "description": "单一水空气界面的折射率。",
+        "properties": {
+          "n_air": {
+            "default": 1.00029,
+            "description": "空气折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Air",
+            "type": "number"
+          },
+          "n_water": {
+            "default": 1.333,
+            "description": "水折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Water",
+            "type": "number"
+          }
+        },
+        "title": "OpticsConfig",
+        "type": "object"
+      },
+      "TankConfig": {
+        "additionalProperties": false,
+        "description": "矩形水池尺寸，深度是正值。",
+        "properties": {
+          "length_m": {
+            "default": 5,
+            "description": "场地长轴尺寸 m",
+            "exclusiveMinimum": 0,
+            "title": "Length M",
+            "type": "number"
+          },
+          "width_m": {
+            "default": 5,
+            "description": "场地宽轴尺寸 m",
+            "exclusiveMinimum": 0,
+            "title": "Width M",
+            "type": "number"
+          },
+          "depth_m": {
+            "default": 2,
+            "description": "水池正值深度 m",
+            "exclusiveMinimum": 0,
+            "title": "Depth M",
+            "type": "number"
+          }
+        },
+        "title": "TankConfig",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "深度网格上的几何点覆盖评价，不表示真实检测概率。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "tank": {
+        "$ref": "#/$defs/TankConfig"
+      },
+      "cameras": {
+        "items": {
+          "$ref": "#/$defs/CameraCalibration"
+        },
+        "title": "Cameras",
+        "type": "array"
+      },
+      "depths_m": {
+        "items": {
+          "type": "number"
+        },
+        "title": "Depths M",
+        "type": "array"
+      },
+      "grid_size": {
+        "default": 7,
+        "maximum": 30,
+        "minimum": 2,
+        "title": "Grid Size",
+        "type": "integer"
+      },
+      "optics": {
+        "$ref": "#/$defs/OpticsConfig"
+      }
+    },
+    "required": [
+      "tank",
+      "cameras"
+    ],
+    "title": "LayoutEvaluationRequest",
+    "type": "object"
+  },
+  "LayoutRequest": {
+    "$defs": {
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "OpticsConfig": {
+        "additionalProperties": false,
+        "description": "单一水空气界面的折射率。",
+        "properties": {
+          "n_air": {
+            "default": 1.00029,
+            "description": "空气折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Air",
+            "type": "number"
+          },
+          "n_water": {
+            "default": 1.333,
+            "description": "水折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Water",
+            "type": "number"
+          }
+        },
+        "title": "OpticsConfig",
+        "type": "object"
+      },
+      "TankConfig": {
+        "additionalProperties": false,
+        "description": "矩形水池尺寸，深度是正值。",
+        "properties": {
+          "length_m": {
+            "default": 5,
+            "description": "场地长轴尺寸 m",
+            "exclusiveMinimum": 0,
+            "title": "Length M",
+            "type": "number"
+          },
+          "width_m": {
+            "default": 5,
+            "description": "场地宽轴尺寸 m",
+            "exclusiveMinimum": 0,
+            "title": "Width M",
+            "type": "number"
+          },
+          "depth_m": {
+            "default": 2,
+            "description": "水池正值深度 m",
+            "exclusiveMinimum": 0,
+            "title": "Depth M",
+            "type": "number"
+          }
+        },
+        "title": "TankConfig",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "正式优化器可使用相机数量、位置和架高约束。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "tank": {
+        "$ref": "#/$defs/TankConfig"
+      },
+      "cameras": {
+        "items": {
+          "$ref": "#/$defs/CameraCalibration"
+        },
+        "title": "Cameras",
+        "type": "array"
+      },
+      "depths_m": {
+        "items": {
+          "type": "number"
+        },
+        "title": "Depths M",
+        "type": "array"
+      },
+      "grid_size": {
+        "default": 7,
+        "maximum": 30,
+        "minimum": 2,
+        "title": "Grid Size",
+        "type": "integer"
+      },
+      "optics": {
+        "$ref": "#/$defs/OpticsConfig"
+      },
+      "camera_count": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Camera Count"
+      },
+      "position_bounds_m": {
+        "anyOf": [
+          {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position Bounds M"
+      },
+      "height_bounds_m": {
+        "anyOf": [
+          {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Height Bounds M"
+      },
+      "camera_template": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/CameraCalibration"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "coverage_weight": {
+        "default": 1,
+        "description": "布局覆盖目标权重，固定布局不执行优化",
+        "minimum": 0,
+        "title": "Coverage Weight",
+        "type": "number"
+      },
+      "precision_weight": {
+        "default": 0,
+        "description": "布局精度目标权重，度量及假设由正式算法声明",
+        "minimum": 0,
+        "title": "Precision Weight",
+        "type": "number"
+      }
+    },
+    "required": [
+      "tank",
+      "cameras"
+    ],
+    "title": "LayoutRequest",
+    "type": "object"
+  },
+  "LayoutResult": {
+    "$defs": {
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "LayoutEvaluation": {
+        "additionalProperties": false,
+        "description": "水中段射线的交会角和几何点覆盖，全部属于未标定演示。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "single_view_coverage": {
+            "default": 0,
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Single View Coverage",
+            "type": "number"
+          },
+          "multi_view_coverage": {
+            "default": 0,
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Multi View Coverage",
+            "type": "number"
+          },
+          "median_intersection_angle_rad": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Median Intersection Angle Rad"
+          },
+          "invalid_point_count": {
+            "default": 0,
+            "title": "Invalid Point Count",
+            "type": "integer"
+          },
+          "sample_count": {
+            "default": 0,
+            "title": "Sample Count",
+            "type": "integer"
+          },
+          "metric_kind": {
+            "default": "GEOMETRIC_POINT_COVERAGE",
+            "title": "Metric Kind",
+            "type": "string"
+          },
+          "evidence_status": {
+            "default": "DEMO_UNCALIBRATED",
+            "title": "Evidence Status",
+            "type": "string"
+          },
+          "precision_metric": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/PrecisionMetric"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "title": "LayoutEvaluation",
+        "type": "object"
+      },
+      "PrecisionMetric": {
+        "additionalProperties": false,
+        "description": "正式布局模块可输出的声明性精度指标，M1 基线不伪造该数值。",
+        "properties": {
+          "kind": {
+            "enum": [
+              "GEOMETRIC_PROXY",
+              "LINEARIZED_COVARIANCE"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "minimum": 0,
+            "title": "Value",
+            "type": "number"
+          },
+          "unit": {
+            "enum": [
+              "m",
+              "m2",
+              "dimensionless"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "assumptions": {
+            "description": "噪声、线性化位置、姿态、聚合方法等假设",
+            "minLength": 1,
+            "title": "Assumptions",
+            "type": "string"
+          },
+          "pixel_stddev_px": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Pixel Stddev Px"
+          }
+        },
+        "required": [
+          "kind",
+          "value",
+          "unit",
+          "assumptions"
+        ],
+        "title": "PrecisionMetric",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "固定布局只回传配置，不宣称优化。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "algorithm_id": {
+        "default": "fixed_layout_v1",
+        "title": "Algorithm Id",
+        "type": "string"
+      },
+      "algorithm_version": {
+        "default": "1.0.0",
+        "title": "Algorithm Version",
+        "type": "string"
+      },
+      "cameras": {
+        "items": {
+          "$ref": "#/$defs/CameraCalibration"
+        },
+        "title": "Cameras",
+        "type": "array"
+      },
+      "evaluation": {
+        "$ref": "#/$defs/LayoutEvaluation"
+      },
+      "optimization_status": {
+        "default": "NOT_OPTIMIZED",
+        "title": "Optimization Status",
+        "type": "string"
+      },
+      "reason": {
+        "default": "固定布局仅回传配置，尚未实现 2.1 优化",
+        "title": "Reason",
+        "type": "string"
+      }
+    },
+    "required": [
+      "cameras",
+      "evaluation"
+    ],
+    "title": "LayoutResult",
+    "type": "object"
+  },
+  "MarkerGeometry": {
+    "additionalProperties": false,
+    "description": "标记机体系标定信息，不含世界真值角点。",
+    "properties": {
+      "marker_id": {
+        "title": "Marker Id",
+        "type": "integer"
+      },
+      "center_m": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Center M",
+        "type": "array"
+      },
+      "u_axis": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "U Axis",
+        "type": "array"
+      },
+      "v_axis": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "V Axis",
+        "type": "array"
+      },
+      "outward_normal": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Outward Normal",
+        "type": "array"
+      },
+      "black_square_size_m": {
+        "default": 0.12,
+        "description": "黑色编码方块边长 m，不含白色静区",
+        "exclusiveMinimum": 0,
+        "title": "Black Square Size M",
+        "type": "number"
+      },
+      "corner_order": {
+        "default": "bottom-left,bottom-right,top-right,top-left",
+        "title": "Corner Order",
+        "type": "string"
+      }
+    },
+    "required": [
+      "marker_id",
+      "center_m",
+      "u_axis",
+      "v_axis",
+      "outward_normal"
+    ],
+    "title": "MarkerGeometry",
+    "type": "object"
+  },
+  "Measurement": {
+    "additionalProperties": false,
+    "description": "测量身份、源时间与接收时间的共同字段。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "measurement_id": {
+        "title": "Measurement Id",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "measurement_time_s": {
+        "minimum": 0,
+        "title": "Measurement Time S",
+        "type": "number"
+      },
+      "received_sim_time_s": {
+        "minimum": 0,
+        "title": "Received Sim Time S",
+        "type": "number"
+      },
+      "source_time_s": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Time S"
+      },
+      "source_clock_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Clock Id"
+      },
+      "source_frame_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Frame Id"
+      },
+      "valid": {
+        "default": true,
+        "title": "Valid",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "measurement_id",
+      "target_id",
+      "measurement_time_s",
+      "received_sim_time_s"
+    ],
+    "title": "Measurement",
+    "type": "object"
+  },
+  "ObservationErrorModel": {
+    "additionalProperties": false,
+    "description": "同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
+    "properties": {
+      "distribution": {
+        "default": "UNSPECIFIED",
+        "enum": [
+          "UNSPECIFIED",
+          "GAUSSIAN",
+          "EMPIRICAL"
+        ],
+        "title": "Distribution",
+        "type": "string"
+      },
+      "unit": {
+        "default": "m",
+        "enum": [
+          "m",
+          "px",
+          "s",
+          "m/s",
+          "dimensionless"
+        ],
+        "title": "Unit",
+        "type": "string"
+      },
+      "stddev": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "标量标准差；未知为空",
+        "title": "Stddev"
+      },
+      "bias": {
+        "default": 0,
+        "description": "同单位的已知常偏；默认未标定零值",
+        "title": "Bias",
+        "type": "number"
+      },
+      "description": {
+        "default": "未标定的接口参数",
+        "title": "Description",
+        "type": "string"
+      },
+      "evidence_status": {
+        "const": "DEMO_UNCALIBRATED",
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      }
+    },
+    "title": "ObservationErrorModel",
+    "type": "object"
+  },
+  "OpticsConfig": {
+    "additionalProperties": false,
+    "description": "单一水空气界面的折射率。",
+    "properties": {
+      "n_air": {
+        "default": 1.00029,
+        "description": "空气折射率",
+        "exclusiveMinimum": 0,
+        "title": "N Air",
+        "type": "number"
+      },
+      "n_water": {
+        "default": 1.333,
+        "description": "水折射率",
+        "exclusiveMinimum": 0,
+        "title": "N Water",
+        "type": "number"
+      }
+    },
+    "title": "OpticsConfig",
+    "type": "object"
+  },
+  "PrecisionMetric": {
+    "additionalProperties": false,
+    "description": "正式布局模块可输出的声明性精度指标，M1 基线不伪造该数值。",
+    "properties": {
+      "kind": {
+        "enum": [
+          "GEOMETRIC_PROXY",
+          "LINEARIZED_COVARIANCE"
+        ],
+        "title": "Kind",
+        "type": "string"
+      },
+      "value": {
+        "minimum": 0,
+        "title": "Value",
+        "type": "number"
+      },
+      "unit": {
+        "enum": [
+          "m",
+          "m2",
+          "dimensionless"
+        ],
+        "title": "Unit",
+        "type": "string"
+      },
+      "assumptions": {
+        "description": "噪声、线性化位置、姿态、聚合方法等假设",
+        "minLength": 1,
+        "title": "Assumptions",
+        "type": "string"
+      },
+      "pixel_stddev_px": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Pixel Stddev Px"
+      }
+    },
+    "required": [
+      "kind",
+      "value",
+      "unit",
+      "assumptions"
+    ],
+    "title": "PrecisionMetric",
+    "type": "object"
+  },
+  "ProjectionRequest": {
+    "$defs": {
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "OpticsConfig": {
+        "additionalProperties": false,
+        "description": "单一水空气界面的折射率。",
+        "properties": {
+          "n_air": {
+            "default": 1.00029,
+            "description": "空气折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Air",
+            "type": "number"
+          },
+          "n_water": {
+            "default": 1.333,
+            "description": "水折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Water",
+            "type": "number"
+          }
+        },
+        "title": "OpticsConfig",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "候选点投影；仿真生成时可使用真值点，估计时仅用候选点。",
+    "properties": {
+      "point_world_m": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Point World M",
+        "type": "array"
+      },
+      "camera": {
+        "$ref": "#/$defs/CameraCalibration"
+      },
+      "sim_time_s": {
+        "default": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "optics": {
+        "$ref": "#/$defs/OpticsConfig"
+      }
+    },
+    "required": [
+      "point_world_m",
+      "camera"
+    ],
+    "title": "ProjectionRequest",
+    "type": "object"
+  },
+  "ProjectionResult": {
+    "$defs": {
+      "RayPath": {
+        "additionalProperties": false,
+        "description": "方向均由相机朝目标，界面交点为空表示理想直线模型。",
+        "properties": {
+          "valid": {
+            "default": false,
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "status": {
+            "default": "NO_PATH",
+            "title": "Status",
+            "type": "string"
+          },
+          "origin_world_m": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Origin World M"
+          },
+          "intersection_world_m": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Intersection World M"
+          },
+          "air_direction_world": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Air Direction World"
+          },
+          "water_direction_world": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Water Direction World"
+          }
+        },
+        "title": "RayPath",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "投影结果不把图像范围外像素冒充可见点。",
+    "properties": {
+      "valid": {
+        "default": false,
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "status": {
+        "default": "NO_PATH",
+        "title": "Status",
+        "type": "string"
+      },
+      "pixel_px": {
+        "anyOf": [
+          {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Pixel Px"
+      },
+      "ray": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/RayPath"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "in_image": {
+        "default": false,
+        "title": "In Image",
+        "type": "boolean"
+      }
+    },
+    "title": "ProjectionResult",
+    "type": "object"
+  },
+  "RayPath": {
+    "additionalProperties": false,
+    "description": "方向均由相机朝目标，界面交点为空表示理想直线模型。",
+    "properties": {
+      "valid": {
+        "default": false,
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "status": {
+        "default": "NO_PATH",
+        "title": "Status",
+        "type": "string"
+      },
+      "origin_world_m": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Origin World M"
+      },
+      "intersection_world_m": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Intersection World M"
+      },
+      "air_direction_world": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Air Direction World"
+      },
+      "water_direction_world": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Water Direction World"
+      }
+    },
+    "title": "RayPath",
+    "type": "object"
+  },
+  "RunMetadata": {
+    "additionalProperties": false,
+    "description": "运行配置、资产和软件的溯源信息。",
+    "properties": {
+      "run_id": {
+        "title": "Run Id",
+        "type": "string"
+      },
+      "scenario_id": {
+        "title": "Scenario Id",
+        "type": "string"
+      },
+      "seed": {
+        "title": "Seed",
+        "type": "integer"
+      },
+      "config_hash": {
+        "title": "Config Hash",
+        "type": "string"
+      },
+      "asset_hashes": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Asset Hashes",
+        "type": "object"
+      },
+      "effective_config": {
+        "additionalProperties": true,
+        "title": "Effective Config",
+        "type": "object"
+      },
+      "software_version": {
+        "default": "0.1.0",
+        "title": "Software Version",
+        "type": "string"
+      },
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "evidence_status": {
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      },
+      "python_executable": {
+        "default": "",
+        "title": "Python Executable",
+        "type": "string"
+      },
+      "python_version": {
+        "default": "",
+        "title": "Python Version",
+        "type": "string"
+      },
+      "platform": {
+        "default": "",
+        "title": "Platform",
+        "type": "string"
+      },
+      "mode": {
+        "default": "FLAT_SNELL_REFRACTION",
+        "enum": [
+          "IDEAL_NO_REFRACTION",
+          "FLAT_SNELL_REFRACTION",
+          "WAVY_SNELL_REFRACTION"
+        ],
+        "title": "Mode",
+        "type": "string"
+      },
+      "algorithms": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Algorithms",
+        "type": "object"
+      },
+      "algorithm_versions": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Algorithm Versions",
+        "type": "object"
+      },
+      "dependencies": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Dependencies",
+        "type": "object"
+      },
+      "sampling": {
+        "default": "",
+        "title": "Sampling",
+        "type": "string"
+      },
+      "status": {
+        "default": "created",
+        "title": "Status",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "default": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "metrics": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Metrics"
+      },
+      "failure": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Failure"
+      }
+    },
+    "required": [
+      "run_id",
+      "scenario_id",
+      "seed",
+      "config_hash",
+      "asset_hashes",
+      "effective_config"
+    ],
+    "title": "RunMetadata",
+    "type": "object"
+  },
+  "ScenarioConfig": {
+    "$defs": {
+      "AdapterSelection": {
+        "additionalProperties": false,
+        "description": "显式注册表中的算法 ID；不接受任意 Python 路径。",
+        "properties": {
+          "layout": {
+            "default": "fixed_layout_v1",
+            "title": "Layout",
+            "type": "string"
+          },
+          "vision": {
+            "default": "flat_snell_baseline_v1",
+            "title": "Vision",
+            "type": "string"
+          },
+          "refraction": {
+            "default": "snell_single_interface_v1",
+            "title": "Refraction",
+            "type": "string"
+          },
+          "wave": {
+            "default": "seeded_multisine_v1",
+            "title": "Wave",
+            "type": "string"
+          },
+          "acoustic": {
+            "default": "buffered_ranges_v1",
+            "title": "Acoustic",
+            "type": "string"
+          },
+          "fusion": {
+            "default": "noop_fusion_v1",
+            "title": "Fusion",
+            "type": "string"
+          }
+        },
+        "title": "AdapterSelection",
+        "type": "object"
+      },
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "ExperimentConfig": {
+        "additionalProperties": false,
+        "description": "对同一观测批次运行的独立对照估计器。",
+        "properties": {
+          "comparison_vision_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Comparison Vision Ids",
+            "type": "array"
+          }
+        },
+        "title": "ExperimentConfig",
+        "type": "object"
+      },
+      "FusionContext": {
+        "additionalProperties": false,
+        "description": "融合标定；已知时钟映射为 t_sim=scale*t_source+offset，不估计设备时钟。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "coordinate_frame": {
+            "const": "LOCAL_TANK_RH",
+            "default": "LOCAL_TANK_RH",
+            "title": "Coordinate Frame",
+            "type": "string"
+          },
+          "anchors_world_m": {
+            "additionalProperties": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Anchors World M",
+            "type": "object"
+          },
+          "sensor_extrinsics": {
+            "additionalProperties": {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "description": "T_world_sensor，4×4 刚体变换",
+            "title": "Sensor Extrinsics",
+            "type": "object"
+          },
+          "clock_offsets_s": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "设备时钟到仿真时钟偏移 s",
+            "title": "Clock Offsets S",
+            "type": "object"
+          },
+          "clock_scales": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "设备时钟到仿真时钟比例，默认 1",
+            "title": "Clock Scales",
+            "type": "object"
+          },
+          "error_models": {
+            "additionalProperties": {
+              "$ref": "#/$defs/ObservationErrorModel"
+            },
+            "title": "Error Models",
+            "type": "object"
+          },
+          "alignment_tolerance_s": {
+            "default": 1e-06,
+            "description": "校验已映射时间的一致性容差 s",
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Alignment Tolerance S",
+            "type": "number"
+          }
+        },
+        "title": "FusionContext",
+        "type": "object"
+      },
+      "ObservationErrorModel": {
+        "additionalProperties": false,
+        "description": "同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
+        "properties": {
+          "distribution": {
+            "default": "UNSPECIFIED",
+            "enum": [
+              "UNSPECIFIED",
+              "GAUSSIAN",
+              "EMPIRICAL"
+            ],
+            "title": "Distribution",
+            "type": "string"
+          },
+          "unit": {
+            "default": "m",
+            "enum": [
+              "m",
+              "px",
+              "s",
+              "m/s",
+              "dimensionless"
+            ],
+            "title": "Unit",
+            "type": "string"
+          },
+          "stddev": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "标量标准差；未知为空",
+            "title": "Stddev"
+          },
+          "bias": {
+            "default": 0,
+            "description": "同单位的已知常偏；默认未标定零值",
+            "title": "Bias",
+            "type": "number"
+          },
+          "description": {
+            "default": "未标定的接口参数",
+            "title": "Description",
+            "type": "string"
+          },
+          "evidence_status": {
+            "const": "DEMO_UNCALIBRATED",
+            "default": "DEMO_UNCALIBRATED",
+            "title": "Evidence Status",
+            "type": "string"
+          }
+        },
+        "title": "ObservationErrorModel",
+        "type": "object"
+      },
+      "OpticsConfig": {
+        "additionalProperties": false,
+        "description": "单一水空气界面的折射率。",
+        "properties": {
+          "n_air": {
+            "default": 1.00029,
+            "description": "空气折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Air",
+            "type": "number"
+          },
+          "n_water": {
+            "default": 1.333,
+            "description": "水折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Water",
+            "type": "number"
+          }
+        },
+        "title": "OpticsConfig",
+        "type": "object"
+      },
+      "TankConfig": {
+        "additionalProperties": false,
+        "description": "矩形水池尺寸，深度是正值。",
+        "properties": {
+          "length_m": {
+            "default": 5,
+            "description": "场地长轴尺寸 m",
+            "exclusiveMinimum": 0,
+            "title": "Length M",
+            "type": "number"
+          },
+          "width_m": {
+            "default": 5,
+            "description": "场地宽轴尺寸 m",
+            "exclusiveMinimum": 0,
+            "title": "Width M",
+            "type": "number"
+          },
+          "depth_m": {
+            "default": 2,
+            "description": "水池正值深度 m",
+            "exclusiveMinimum": 0,
+            "title": "Depth M",
+            "type": "number"
+          }
+        },
+        "title": "TankConfig",
+        "type": "object"
+      },
+      "TargetConfig": {
+        "additionalProperties": false,
+        "description": "水平圆轨迹，仅用于生成运动真值。",
+        "properties": {
+          "target_id": {
+            "default": "UUV-001",
+            "description": "目标唯一标识",
+            "title": "Target Id",
+            "type": "string"
+          },
+          "radius_m": {
+            "default": 0.7,
+            "description": "圆轨迹半径 m",
+            "exclusiveMinimum": 0,
+            "title": "Radius M",
+            "type": "number"
+          },
+          "depth_m": {
+            "default": 1,
+            "description": "艇体中心正值深度 m",
+            "exclusiveMinimum": 0,
+            "title": "Depth M",
+            "type": "number"
+          },
+          "period_s": {
+            "default": 60,
+            "description": "圆轨迹周期 s；速度由此推导",
+            "exclusiveMinimum": 0,
+            "title": "Period S",
+            "type": "number"
+          },
+          "phase_rad": {
+            "default": 0,
+            "description": "轨迹起始相位 rad",
+            "title": "Phase Rad",
+            "type": "number"
+          },
+          "center_xy_m": {
+            "default": [
+              0,
+              0
+            ],
+            "description": "轨迹中心水平坐标 m",
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Center Xy M",
+            "type": "array"
+          }
+        },
+        "title": "TargetConfig",
+        "type": "object"
+      },
+      "WaveConfig": {
+        "additionalProperties": false,
+        "description": "运动波面；振幅总和是波高绝对值上界，并非显著波高。",
+        "properties": {
+          "amplitude_m": {
+            "default": 0.02,
+            "description": "各分量振幅绝对值总和 m",
+            "maximum": 0.08,
+            "minimum": 0,
+            "title": "Amplitude M",
+            "type": "number"
+          },
+          "wavelengths_m": {
+            "description": "各分量波长 m",
+            "items": {
+              "type": "number"
+            },
+            "title": "Wavelengths M",
+            "type": "array"
+          },
+          "periods_s": {
+            "description": "各分量周期 s",
+            "items": {
+              "type": "number"
+            },
+            "title": "Periods S",
+            "type": "array"
+          },
+          "directions_rad": {
+            "description": "各分量传播方位 rad",
+            "items": {
+              "type": "number"
+            },
+            "title": "Directions Rad",
+            "type": "array"
+          }
+        },
+        "title": "WaveConfig",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "完整场景只传给调度/生成器，不能传给估计器。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "scenario_id": {
+        "default": "demo_uncalibrated",
+        "title": "Scenario Id",
+        "type": "string"
+      },
+      "name": {
+        "default": "微型 UUV 基础闭环演示",
+        "title": "Name",
+        "type": "string"
+      },
+      "evidence_status": {
+        "const": "DEMO_UNCALIBRATED",
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "mode": {
+        "default": "FLAT_SNELL_REFRACTION",
+        "enum": [
+          "IDEAL_NO_REFRACTION",
+          "FLAT_SNELL_REFRACTION",
+          "WAVY_SNELL_REFRACTION"
+        ],
+        "title": "Mode",
+        "type": "string"
+      },
+      "seed": {
+        "default": 20261102,
+        "title": "Seed",
+        "type": "integer"
+      },
+      "dt_s": {
+        "default": 0.1,
+        "maximum": 1,
+        "minimum": 0.01,
+        "title": "Dt S",
+        "type": "number"
+      },
+      "duration_s": {
+        "default": 60,
+        "exclusiveMinimum": 0,
+        "maximum": 3600,
+        "title": "Duration S",
+        "type": "number"
+      },
+      "tank": {
+        "$ref": "#/$defs/TankConfig"
+      },
+      "cameras": {
+        "items": {
+          "$ref": "#/$defs/CameraCalibration"
+        },
+        "maxItems": 16,
+        "minItems": 1,
+        "title": "Cameras",
+        "type": "array"
+      },
+      "targets": {
+        "items": {
+          "$ref": "#/$defs/TargetConfig"
+        },
+        "maxItems": 8,
+        "minItems": 1,
+        "title": "Targets",
+        "type": "array"
+      },
+      "optics": {
+        "$ref": "#/$defs/OpticsConfig"
+      },
+      "wave": {
+        "$ref": "#/$defs/WaveConfig"
+      },
+      "pixel_noise_std_px": {
+        "default": 0,
+        "maximum": 20,
+        "minimum": 0,
+        "title": "Pixel Noise Std Px",
+        "type": "number"
+      },
+      "adapters": {
+        "$ref": "#/$defs/AdapterSelection"
+      },
+      "experiments": {
+        "$ref": "#/$defs/ExperimentConfig"
+      },
+      "anchors_world_m": {
+        "additionalProperties": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        "description": "声学锚点世界坐标 m",
+        "title": "Anchors World M",
+        "type": "object"
+      },
+      "fusion_context": {
+        "$ref": "#/$defs/FusionContext",
+        "description": "2.3 的外参、时钟、误差配置；锚点以 anchors_world_m 为权威"
+      }
+    },
+    "title": "ScenarioConfig",
+    "type": "object"
+  },
+  "SurfaceSample": {
+    "additionalProperties": false,
+    "description": "波面高度、梯度与向上法向量。",
+    "properties": {
+      "height_m": {
+        "title": "Height M",
+        "type": "number"
+      },
+      "gradient": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Gradient",
+        "type": "array"
+      },
+      "normal_world": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Normal World",
+        "type": "array"
+      }
+    },
+    "required": [
+      "height_m",
+      "gradient",
+      "normal_world"
+    ],
+    "title": "SurfaceSample",
+    "type": "object"
+  },
+  "TankConfig": {
+    "additionalProperties": false,
+    "description": "矩形水池尺寸，深度是正值。",
+    "properties": {
+      "length_m": {
+        "default": 5,
+        "description": "场地长轴尺寸 m",
+        "exclusiveMinimum": 0,
+        "title": "Length M",
+        "type": "number"
+      },
+      "width_m": {
+        "default": 5,
+        "description": "场地宽轴尺寸 m",
+        "exclusiveMinimum": 0,
+        "title": "Width M",
+        "type": "number"
+      },
+      "depth_m": {
+        "default": 2,
+        "description": "水池正值深度 m",
+        "exclusiveMinimum": 0,
+        "title": "Depth M",
+        "type": "number"
+      }
+    },
+    "title": "TankConfig",
+    "type": "object"
+  },
+  "TargetConfig": {
+    "additionalProperties": false,
+    "description": "水平圆轨迹，仅用于生成运动真值。",
+    "properties": {
+      "target_id": {
+        "default": "UUV-001",
+        "description": "目标唯一标识",
+        "title": "Target Id",
+        "type": "string"
+      },
+      "radius_m": {
+        "default": 0.7,
+        "description": "圆轨迹半径 m",
+        "exclusiveMinimum": 0,
+        "title": "Radius M",
+        "type": "number"
+      },
+      "depth_m": {
+        "default": 1,
+        "description": "艇体中心正值深度 m",
+        "exclusiveMinimum": 0,
+        "title": "Depth M",
+        "type": "number"
+      },
+      "period_s": {
+        "default": 60,
+        "description": "圆轨迹周期 s；速度由此推导",
+        "exclusiveMinimum": 0,
+        "title": "Period S",
+        "type": "number"
+      },
+      "phase_rad": {
+        "default": 0,
+        "description": "轨迹起始相位 rad",
+        "title": "Phase Rad",
+        "type": "number"
+      },
+      "center_xy_m": {
+        "default": [
+          0,
+          0
+        ],
+        "description": "轨迹中心水平坐标 m",
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Center Xy M",
+        "type": "array"
+      }
+    },
+    "title": "TargetConfig",
+    "type": "object"
+  },
+  "UuvTruth": {
+    "additionalProperties": false,
+    "description": "仅用于生成、评价和显示的真值事件。",
+    "properties": {
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "position_m": {
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Position M",
+        "type": "array"
+      },
+      "yaw_rad": {
+        "title": "Yaw Rad",
+        "type": "number"
+      },
+      "orientation_wxyz": {
+        "maxItems": 4,
+        "minItems": 4,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Orientation Wxyz",
+        "type": "array"
+      },
+      "speed_mps": {
+        "title": "Speed Mps",
+        "type": "number"
+      },
+      "evidence_status": {
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      }
+    },
+    "required": [
+      "target_id",
+      "position_m",
+      "yaw_rad",
+      "orientation_wxyz",
+      "speed_mps"
+    ],
+    "title": "UuvTruth",
+    "type": "object"
+  },
+  "VisionEstimate": {
+    "additionalProperties": false,
+    "description": "水平航行基线估计 xyz+yaw，协方差未知时为空。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "minimum": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "algorithm_id": {
+        "title": "Algorithm Id",
+        "type": "string"
+      },
+      "algorithm_version": {
+        "default": "1.0.0",
+        "title": "Algorithm Version",
+        "type": "string"
+      },
+      "valid": {
+        "default": false,
+        "title": "Valid",
+        "type": "boolean"
+      },
+      "status": {
+        "default": "NO_OBSERVATION",
+        "title": "Status",
+        "type": "string"
+      },
+      "reason": {
+        "default": "",
+        "title": "Reason",
+        "type": "string"
+      },
+      "position_m": {
+        "anyOf": [
+          {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position M"
+      },
+      "yaw_rad": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Yaw Rad"
+      },
+      "orientation_wxyz": {
+        "anyOf": [
+          {
+            "maxItems": 4,
+            "minItems": 4,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Orientation Wxyz"
+      },
+      "estimated_dofs": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Estimated Dofs",
+        "type": "array"
+      },
+      "position_covariance_m2": {
+        "anyOf": [
+          {
+            "items": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position Covariance M2"
+      },
+      "reprojection_rmse_px": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reprojection Rmse Px"
+      },
+      "used_measurement_ids": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Used Measurement Ids",
+        "type": "array"
+      },
+      "evidence_status": {
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      },
+      "correction_status": {
+        "default": "MODEL_AWARE_DEMO",
+        "title": "Correction Status",
+        "type": "string"
+      },
+      "filter_lag_nominal_s": {
+        "default": 0,
+        "title": "Filter Lag Nominal S",
+        "type": "number"
+      }
+    },
+    "required": [
+      "target_id",
+      "sim_time_s",
+      "algorithm_id"
+    ],
+    "title": "VisionEstimate",
+    "type": "object"
+  },
+  "VisionRequest": {
+    "$defs": {
+      "CalibrationContext": {
+        "additionalProperties": false,
+        "description": "白名单标定上下文：没有场景、轨迹、种子或瞬时真实波面。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "coordinate_frame": {
+            "const": "LOCAL_TANK_RH",
+            "default": "LOCAL_TANK_RH",
+            "title": "Coordinate Frame",
+            "type": "string"
+          },
+          "cameras": {
+            "items": {
+              "$ref": "#/$defs/CameraCalibration"
+            },
+            "title": "Cameras",
+            "type": "array"
+          },
+          "markers": {
+            "items": {
+              "$ref": "#/$defs/MarkerGeometry"
+            },
+            "title": "Markers",
+            "type": "array"
+          },
+          "optics": {
+            "$ref": "#/$defs/OpticsConfig"
+          },
+          "use_refraction": {
+            "default": true,
+            "title": "Use Refraction",
+            "type": "boolean"
+          },
+          "mean_surface_z_m": {
+            "const": 0.0,
+            "default": 0.0,
+            "title": "Mean Surface Z M",
+            "type": "number"
+          }
+        },
+        "required": [
+          "cameras",
+          "markers"
+        ],
+        "title": "CalibrationContext",
+        "type": "object"
+      },
+      "CameraCalibration": {
+        "additionalProperties": false,
+        "description": "相机坐标 x 右、y 下、z 前；相机朝向用世界目标点定义。",
+        "properties": {
+          "camera_id": {
+            "description": "相机唯一标识",
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "position_m": {
+            "description": "相机光心世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Position M",
+            "type": "array"
+          },
+          "look_at_m": {
+            "default": [
+              0,
+              0,
+              -1
+            ],
+            "description": "光轴指向的世界坐标 m",
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Look At M",
+            "type": "array"
+          },
+          "width_px": {
+            "default": 1280,
+            "description": "图像宽度 px",
+            "exclusiveMinimum": 0,
+            "title": "Width Px",
+            "type": "integer"
+          },
+          "height_px": {
+            "default": 720,
+            "description": "图像高度 px",
+            "exclusiveMinimum": 0,
+            "title": "Height Px",
+            "type": "integer"
+          },
+          "fx_px": {
+            "default": 900,
+            "description": "水平焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fx Px",
+            "type": "number"
+          },
+          "fy_px": {
+            "default": 900,
+            "description": "垂直焦距 px",
+            "exclusiveMinimum": 0,
+            "title": "Fy Px",
+            "type": "number"
+          },
+          "cx_px": {
+            "default": 640,
+            "description": "主点横坐标 px",
+            "title": "Cx Px",
+            "type": "number"
+          },
+          "cy_px": {
+            "default": 360,
+            "description": "主点纵坐标 px",
+            "title": "Cy Px",
+            "type": "number"
+          }
+        },
+        "required": [
+          "camera_id",
+          "position_m"
+        ],
+        "title": "CameraCalibration",
+        "type": "object"
+      },
+      "CameraObservation": {
+        "additionalProperties": false,
+        "description": "解析已知关联角点，只传最终像素，不传理想像素和世界角点。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "measurement_id": {
+            "title": "Measurement Id",
+            "type": "string"
+          },
+          "target_id": {
+            "title": "Target Id",
+            "type": "string"
+          },
+          "measurement_time_s": {
+            "minimum": 0,
+            "title": "Measurement Time S",
+            "type": "number"
+          },
+          "received_sim_time_s": {
+            "minimum": 0,
+            "title": "Received Sim Time S",
+            "type": "number"
+          },
+          "source_time_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Time S"
+          },
+          "source_clock_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Clock Id"
+          },
+          "source_frame_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Frame Id"
+          },
+          "valid": {
+            "default": true,
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "camera_id": {
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "marker_id": {
+            "title": "Marker Id",
+            "type": "integer"
+          },
+          "corners_px": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Corners Px",
+            "type": "array"
+          },
+          "corner_order": {
+            "const": "bottom-left,bottom-right,top-right,top-left",
+            "default": "bottom-left,bottom-right,top-right,top-left",
+            "title": "Corner Order",
+            "type": "string"
+          },
+          "pixel_noise_std_px": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Pixel Noise Std Px",
+            "type": "number"
+          },
+          "observation_kind": {
+            "const": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+            "default": "ANALYTIC_IDEAL_MARKER_OBSERVATION",
+            "title": "Observation Kind",
+            "type": "string"
+          },
+          "association_kind": {
+            "const": "SYNTHETIC_KNOWN_ASSOCIATION",
+            "default": "SYNTHETIC_KNOWN_ASSOCIATION",
+            "title": "Association Kind",
+            "type": "string"
+          },
+          "refraction_mode": {
+            "default": "IDEAL_NO_REFRACTION",
+            "enum": [
+              "IDEAL_NO_REFRACTION",
+              "FLAT_SNELL_REFRACTION",
+              "WAVY_SNELL_REFRACTION"
+            ],
+            "title": "Refraction Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "measurement_id",
+          "target_id",
+          "measurement_time_s",
+          "received_sim_time_s",
+          "camera_id",
+          "marker_id",
+          "corners_px"
+        ],
+        "title": "CameraObservation",
+        "type": "object"
+      },
+      "MarkerGeometry": {
+        "additionalProperties": false,
+        "description": "标记机体系标定信息，不含世界真值角点。",
+        "properties": {
+          "marker_id": {
+            "title": "Marker Id",
+            "type": "integer"
+          },
+          "center_m": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Center M",
+            "type": "array"
+          },
+          "u_axis": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "U Axis",
+            "type": "array"
+          },
+          "v_axis": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "V Axis",
+            "type": "array"
+          },
+          "outward_normal": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Outward Normal",
+            "type": "array"
+          },
+          "black_square_size_m": {
+            "default": 0.12,
+            "description": "黑色编码方块边长 m，不含白色静区",
+            "exclusiveMinimum": 0,
+            "title": "Black Square Size M",
+            "type": "number"
+          },
+          "corner_order": {
+            "default": "bottom-left,bottom-right,top-right,top-left",
+            "title": "Corner Order",
+            "type": "string"
+          }
+        },
+        "required": [
+          "marker_id",
+          "center_m",
+          "u_axis",
+          "v_axis",
+          "outward_normal"
+        ],
+        "title": "MarkerGeometry",
+        "type": "object"
+      },
+      "OpticsConfig": {
+        "additionalProperties": false,
+        "description": "单一水空气界面的折射率。",
+        "properties": {
+          "n_air": {
+            "default": 1.00029,
+            "description": "空气折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Air",
+            "type": "number"
+          },
+          "n_water": {
+            "default": 1.333,
+            "description": "水折射率",
+            "exclusiveMinimum": 0,
+            "title": "N Water",
+            "type": "number"
+          }
+        },
+        "title": "OpticsConfig",
+        "type": "object"
+      },
+      "VisionEstimate": {
+        "additionalProperties": false,
+        "description": "水平航行基线估计 xyz+yaw，协方差未知时为空。",
+        "properties": {
+          "schema_version": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "coordinate_frame": {
+            "const": "LOCAL_TANK_RH",
+            "default": "LOCAL_TANK_RH",
+            "title": "Coordinate Frame",
+            "type": "string"
+          },
+          "target_id": {
+            "title": "Target Id",
+            "type": "string"
+          },
+          "sim_time_s": {
+            "minimum": 0,
+            "title": "Sim Time S",
+            "type": "number"
+          },
+          "algorithm_id": {
+            "title": "Algorithm Id",
+            "type": "string"
+          },
+          "algorithm_version": {
+            "default": "1.0.0",
+            "title": "Algorithm Version",
+            "type": "string"
+          },
+          "valid": {
+            "default": false,
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "status": {
+            "default": "NO_OBSERVATION",
+            "title": "Status",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "title": "Reason",
+            "type": "string"
+          },
+          "position_m": {
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "minItems": 3,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Position M"
+          },
+          "yaw_rad": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Yaw Rad"
+          },
+          "orientation_wxyz": {
+            "anyOf": [
+              {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Orientation Wxyz"
+          },
+          "estimated_dofs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Estimated Dofs",
+            "type": "array"
+          },
+          "position_covariance_m2": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Position Covariance M2"
+          },
+          "reprojection_rmse_px": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reprojection Rmse Px"
+          },
+          "used_measurement_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Used Measurement Ids",
+            "type": "array"
+          },
+          "evidence_status": {
+            "default": "DEMO_UNCALIBRATED",
+            "title": "Evidence Status",
+            "type": "string"
+          },
+          "correction_status": {
+            "default": "MODEL_AWARE_DEMO",
+            "title": "Correction Status",
+            "type": "string"
+          },
+          "filter_lag_nominal_s": {
+            "default": 0,
+            "title": "Filter Lag Nominal S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "target_id",
+          "sim_time_s",
+          "algorithm_id"
+        ],
+        "title": "VisionEstimate",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "估计器仅接收观测、标定和可选历史估计。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "target_id": {
+        "title": "Target Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "minimum": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "observations": {
+        "items": {
+          "$ref": "#/$defs/CameraObservation"
+        },
+        "title": "Observations",
+        "type": "array"
+      },
+      "calibration": {
+        "$ref": "#/$defs/CalibrationContext"
+      },
+      "prior_estimate": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/VisionEstimate"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "target_id",
+      "sim_time_s",
+      "observations",
+      "calibration"
+    ],
+    "title": "VisionRequest",
+    "type": "object"
+  },
+  "WaterSurfaceSnapshot": {
+    "additionalProperties": false,
+    "description": "后端权威的水面显示网格，与光学使用同一波场实例，不传给估计器。",
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "surface_id": {
+        "const": "water",
+        "default": "water",
+        "title": "Surface Id",
+        "type": "string"
+      },
+      "coordinate_frame": {
+        "const": "LOCAL_TANK_RH",
+        "default": "LOCAL_TANK_RH",
+        "title": "Coordinate Frame",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "minimum": 0,
+        "title": "Sim Time S",
+        "type": "number"
+      },
+      "rows": {
+        "default": 21,
+        "maximum": 101,
+        "minimum": 2,
+        "title": "Rows",
+        "type": "integer"
+      },
+      "columns": {
+        "default": 21,
+        "maximum": 101,
+        "minimum": 2,
+        "title": "Columns",
+        "type": "integer"
+      },
+      "x_bounds_m": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "X Bounds M",
+        "type": "array"
+      },
+      "y_bounds_m": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          }
+        ],
+        "title": "Y Bounds M",
+        "type": "array"
+      },
+      "heights_m": {
+        "items": {
+          "type": "number"
+        },
+        "title": "Heights M",
+        "type": "array"
+      },
+      "normals_world": {
+        "items": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        "title": "Normals World",
+        "type": "array"
+      },
+      "model_kind": {
+        "title": "Model Kind",
+        "type": "string"
+      },
+      "evidence_status": {
+        "const": "DEMO_UNCALIBRATED",
+        "default": "DEMO_UNCALIBRATED",
+        "title": "Evidence Status",
+        "type": "string"
+      }
+    },
+    "required": [
+      "sim_time_s",
+      "x_bounds_m",
+      "y_bounds_m",
+      "heights_m",
+      "normals_world",
+      "model_kind"
+    ],
+    "title": "WaterSurfaceSnapshot",
+    "type": "object"
+  },
+  "WaveConfig": {
+    "additionalProperties": false,
+    "description": "运动波面；振幅总和是波高绝对值上界，并非显著波高。",
+    "properties": {
+      "amplitude_m": {
+        "default": 0.02,
+        "description": "各分量振幅绝对值总和 m",
+        "maximum": 0.08,
+        "minimum": 0,
+        "title": "Amplitude M",
+        "type": "number"
+      },
+      "wavelengths_m": {
+        "description": "各分量波长 m",
+        "items": {
+          "type": "number"
+        },
+        "title": "Wavelengths M",
+        "type": "array"
+      },
+      "periods_s": {
+        "description": "各分量周期 s",
+        "items": {
+          "type": "number"
+        },
+        "title": "Periods S",
+        "type": "array"
+      },
+      "directions_rad": {
+        "description": "各分量传播方位 rad",
+        "items": {
+          "type": "number"
+        },
+        "title": "Directions Rad",
+        "type": "array"
+      }
+    },
+    "title": "WaveConfig",
+    "type": "object"
+  }
+}

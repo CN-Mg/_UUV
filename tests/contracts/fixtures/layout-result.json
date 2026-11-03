@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "coordinate_frame": "LOCAL_TANK_RH",
+  "algorithm_id": "fixed_layout_v1",
+  "algorithm_version": "1.0.0",
+  "cameras": [
+    {
+      "camera_id": "C1",
+      "position_m": [
+        -2.0,
+        -2.0,
+        1.5
+      ],
+      "look_at_m": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "width_px": 1280,
+      "height_px": 720,
+      "fx_px": 900.0,
+      "fy_px": 900.0,
+      "cx_px": 640.0,
+      "cy_px": 360.0
+    },
+    {
+      "camera_id": "C2",
+      "position_m": [
+        2.0,
+        -2.0,
+        1.5
+      ],
+      "look_at_m": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "width_px": 1280,
+      "height_px": 720,
+      "fx_px": 900.0,
+      "fy_px": 900.0,
+      "cx_px": 640.0,
+      "cy_px": 360.0
+    },
+    {
+      "camera_id": "C3",
+      "position_m": [
+        0.0,
+        2.2,
+        1.5
+      ],
+      "look_at_m": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "width_px": 1280,
+      "height_px": 720,
+      "fx_px": 900.0,
+      "fy_px": 900.0,
+      "cx_px": 640.0,
+      "cy_px": 360.0
+    }
+  ],
+  "evaluation": {
+    "schema_version": "1.0",
+    "single_view_coverage": 0.4444444444444444,
+    "multi_view_coverage": 0.2222222222222222,
+    "median_intersection_angle_rad": 0.8483549421017593,
+    "invalid_point_count": 7,
+    "sample_count": 9,
+    "metric_kind": "GEOMETRIC_POINT_COVERAGE",
+    "evidence_status": "DEMO_UNCALIBRATED",
+    "precision_metric": null
+  },
+  "optimization_status": "NOT_OPTIMIZED",
+  "reason": "固定布局仅回传配置，尚未实现 2.1 优化"
+}
