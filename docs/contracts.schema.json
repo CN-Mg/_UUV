@@ -1734,7 +1734,7 @@
     "$defs": {
       "ObservationErrorModel": {
         "additionalProperties": false,
-        "description": "同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
+        "description": "研究员可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
         "properties": {
           "distribution": {
             "default": "UNSPECIFIED",
@@ -3174,7 +3174,7 @@
   },
   "ObservationErrorModel": {
     "additionalProperties": false,
-    "description": "同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
+    "description": "研究员可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
     "properties": {
       "distribution": {
         "default": "UNSPECIFIED",
@@ -4152,7 +4152,7 @@
       },
       "ObservationErrorModel": {
         "additionalProperties": false,
-        "description": "同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
+        "description": "研究员可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。",
         "properties": {
           "distribution": {
             "default": "UNSPECIFIED",

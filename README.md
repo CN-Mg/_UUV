@@ -31,4 +31,4 @@ Blender 完整示意文件为 `assets/scenes/m1_tank_scene.blend`，前端使用
 - [限制](docs/known-limitations.md)
 - [依赖与许可证](docs/dependencies-and-licenses.md)
 
-M1 的布局模块为固定配置，融合模块为 NoOp 透传；2.1～2.3 正式算法由后续同学通过适配器接入。自动测试和实际交互结果以交付记录为准，不从构建成功推定科学实验已完成。
+M1 的布局模块为固定配置，融合模块为 NoOp 透传；2.1～2.3 正式算法由后续研究员通过适配器接入。自动测试和实际交互结果以交付记录为准，不从构建成功推定科学实验已完成。

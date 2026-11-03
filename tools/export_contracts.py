@@ -1,4 +1,4 @@
-"""导出公开模型 JSON Schema；供同学无需 GUI 即可联调接口。"""
+"""导出公开模型 JSON Schema；供研究员无需 GUI 即可联调接口。"""
 
 import argparse
 import json

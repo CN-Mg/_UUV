@@ -1,6 +1,7 @@
 """坐标、标记和向量化投影公式。"""
 
 import json
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -18,13 +19,21 @@ def unit(vector: np.ndarray) -> np.ndarray:
 
 def camera_rotation(camera: CameraCalibration) -> np.ndarray:
     """T_camera_world 的旋转块：行向量依次是右、下、前。"""
-    forward = unit(np.asarray(camera.look_at_m) - camera.position_m)
+    return _camera_rotation(camera.position_m, camera.look_at_m).copy()
+
+
+@lru_cache(maxsize=128)
+def _camera_rotation(position, look_at) -> np.ndarray:
+    """内部投影复用只读旋转，按外参值区分相机与场景。"""
+    forward = unit(np.asarray(look_at) - position)
     up = np.array([0., 0., 1.])
     if abs(forward @ up) > .999:
         up = np.array([0., 1., 0.])
     right = unit(np.cross(forward, up))
     down = np.cross(forward, right)
-    return np.array([right, down, forward])
+    rotation = np.array([right, down, forward])
+    rotation.setflags(write=False)
+    return rotation
 
 
 def yaw_rotation(yaw_rad: float) -> np.ndarray:
@@ -51,7 +60,7 @@ def marker_corners(marker: MarkerGeometry) -> np.ndarray:
 
 def pinhole_many(points: np.ndarray, camera: CameraCalibration) -> np.ndarray:
     """候选世界点针孔投影；可见性由调用者另外检查。"""
-    q = (points - camera.position_m) @ camera_rotation(camera).T
+    q = (points - camera.position_m) @ _camera_rotation(camera.position_m, camera.look_at_m).T
     z = np.where(abs(q[:, 2]) < 1e-12, 1e-12, q[:, 2])
     return np.column_stack((camera.fx_px * q[:, 0] / z + camera.cx_px,
                             camera.fy_px * q[:, 1] / z + camera.cy_px))

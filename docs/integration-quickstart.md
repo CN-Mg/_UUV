@@ -1,6 +1,6 @@
 # 2.1–2.3 独立联调入口
 
-本文配套 `algorithm-interfaces.md` 和后端权威 `contracts.schema.json`。这些接口用于接入同学自己的实现，不表示 M1 已完成布局优化或多源融合。所有样例仍为 `DEMO_UNCALIBRATED`。
+本文配套 `algorithm-interfaces.md` 和后端权威 `contracts.schema.json`。这些接口用于接入研究员自己的实现，不表示 M1 已完成布局优化或多源融合。所有样例仍为 `DEMO_UNCALIBRATED`。
 
 ## 启动与发现
 
@@ -22,7 +22,7 @@ Invoke-RestMethod "$base/api/layout/optimize" -Method Post -ContentType 'applica
 
 `POST /api/layout/evaluate` 接收 `LayoutEvaluationRequest`，评价请求中不带 `camera_count` 或优化约束；`POST /api/layout/optimize` 接收 `LayoutRequest`。两者都包装为 `{algorithm_id,request}`。
 
-固定实现返回 `NOT_OPTIMIZED`；缺失或违反约束的配置不得假装优化成功。正式同学可返回候选集内的最优布局，但必须声明评价假设和误差模型。几何覆盖与交会角不是已标定定位精度；未计算的位置不确定度为空。
+固定实现返回 `NOT_OPTIMIZED`；缺失或违反约束的配置不得假装优化成功。正式研究员可返回候选集内的最优布局，但必须声明评价假设和误差模型。几何覆盖与交会角不是已标定定位精度；未计算的位置不确定度为空。
 
 ## 2.2 视觉单帧
 
@@ -55,4 +55,4 @@ Invoke-RestMethod "$base/api/fusion/update" -Method Post -ContentType 'applicati
 3. 使用 JSON 样例和契约测试验证，再替换 YAML 的适配器 ID。
 4. 保存配置快照后运行；记录科学事件、错误状态和版本。不修改前端的定位逻辑，也不把真值加入算法输入。
 
-建议的下一步任务：每位同学先接入一个最小实现，使用上述独立入口完成一次合法输入、一次非法输入和一次失败状态联调，再进行方法研究。
+建议的下一步任务：每位研究员先接入一个最小实现，使用上述独立入口完成一次合法输入、一次非法输入和一次失败状态联调，再进行方法研究。

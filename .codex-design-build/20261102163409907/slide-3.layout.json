@@ -32,5 +32,5 @@
 {"id":"sh/ylwzyd0v","kind":"shape","name":"adapter-link-0-0","position":{"left":232,"top":580,"width":0,"height":36},"geometry":"straightConnector1","lineColor":"#77933C","lineWidth":2.4},
 {"id":"sh/zmp07i1g","kind":"shape","name":"adapter-link-1-0","position":{"left":640,"top":580,"width":0,"height":36},"geometry":"straightConnector1","lineColor":"#8064A2","lineWidth":2.4},
 {"id":"sh/0nyh0ni1","kind":"shape","name":"adapter-link-2-0","position":{"left":1048,"top":580,"width":0,"height":36},"geometry":"straightConnector1","lineColor":"#C0504D","lineWidth":2.4},
-{"id":"sh/lo7i9sjm","kind":"textbox","name":"evidence-note","position":{"left":40,"top":678,"width":1200,"height":25},"text":"后续同学提交适配器实现与契约测试，M1 保留可运行基线　　DEMO_UNCALIBRATED","style":{"fontSize":15,"typeface":"黑体","color":"#666666","alignment":"left"},"geometry":"rect","lineWidth":0}
+{"id":"sh/lo7i9sjm","kind":"textbox","name":"evidence-note","position":{"left":40,"top":678,"width":1200,"height":25},"text":"后续研究员提交适配器实现与契约测试，M1 保留可运行基线　　DEMO_UNCALIBRATED","style":{"fontSize":15,"typeface":"黑体","color":"#666666","alignment":"left"},"geometry":"rect","lineWidth":0}
 ]}

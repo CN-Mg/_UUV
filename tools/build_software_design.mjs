@@ -159,8 +159,8 @@ function notes(s,text){s.speakerNotes.text=`依据：D:/_UUV/docs/微型潜航�
  }
  const shared=block(s,'shared-contract','统一数据契约与版本，按注册表和配置切换算法，复用显控、记录与回放',72,616,1136,47,C.blue);
  columns.forEach((c,idx)=>route(s,`adapter-link-${idx}`,[[c.x+184,580],[c.x+184,616]],c.color));
- footer(s,'后续同学提交适配器实现与契约测试，M1 保留可运行基线　　DEMO_UNCALIBRATED');
- notes(s,'对应六类 Protocol：LayoutOptimizer、VisionLocalizer、RefractionModel、WaveSurfaceModel、AcousticRangeSource、FusionLocalizer。输入输出由 Pydantic 模型约束，算法 ID 通过显式注册表和 YAML 选择。M1 固定布局并未优化，NoOpFusion 未对声学或通信观测计权。正式研究算法由后续同学提供。');
+ footer(s,'后续研究员提交适配器实现与契约测试，M1 保留可运行基线　　DEMO_UNCALIBRATED');
+ notes(s,'对应六类 Protocol：LayoutOptimizer、VisionLocalizer、RefractionModel、WaveSurfaceModel、AcousticRangeSource、FusionLocalizer。输入输出由 Pydantic 模型约束，算法 ID 通过显式注册表和 YAML 选择。M1 固定布局并未优化，NoOpFusion 未对声学或通信观测计权。正式研究算法由后续研究员提供。');
 }
 
 // 第 4 页：用可编辑表格保持任务指标与当前状态的可核对关系。

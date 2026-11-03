@@ -29,18 +29,19 @@ from app.contracts import (
 from app.services.runtime import ROOT, TERMINAL, RunManager
 
 
-class StartRequest(BaseModel):
+class SpeedRequest(BaseModel):
+    """墙钟节奏倍率；不改变数学步长。"""
+
+    speed: float = Field(ge=.1, le=16, description="节奏倍率，范围 0.1～16")
+
+
+class StartRequest(SpeedRequest):
     """启动参数：可引用已存场景，也可提交完整配置快照。"""
 
     model_config = ConfigDict(extra="forbid")
     scenario_id: str | None = None
     config: ScenarioConfig | None = None
-
-
-class SpeedRequest(BaseModel):
-    """播放节奏倍率；不改变数学步长。"""
-
-    speed: float = Field(ge=.1, le=16, description="节奏倍率，范围 0.1～16")
+    speed: float = Field(default=1, ge=.1, le=16, description="初始节奏倍率")
 
 
 class LayoutEvaluationCall(BaseModel):
@@ -183,7 +184,7 @@ def create_app(data_root: Path | None = None, scenario_root: Path | None = None)
     def start(request: StartRequest):
         """创建配置快照并启动固定步长运行。"""
         config = request.config or manager.load_scenario(request.scenario_id or "demo_uncalibrated")
-        return manager.create(config).snapshot()
+        return manager.create(config, speed=request.speed).snapshot()
 
     @app.get("/api/runs/{run_id}")
     def run_info(run_id: str):

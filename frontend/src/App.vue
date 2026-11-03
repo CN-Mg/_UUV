@@ -20,6 +20,7 @@ const selectedCamera = ref('C1')
 const run = ref<RunInfo | null>(null)
 const status = ref('idle'), connected = ref(false), busy = ref(false), error = ref(''), notice = ref('')
 const simTime = ref(0), seq = ref(0), speed = ref(1), configHash = ref('尚未创建运行')
+const actualSpeed = ref<number | null>(null)
 const metrics = ref<Record<string, unknown>>({})
 const rows = computed(() => metricRows(metrics.value))
 const assets = reactive<Record<string, string>>({ 'UUV-001': '加载中', 'Blender 场景': '加载中', 'Blender 相机': '加载中' })
@@ -46,6 +47,8 @@ const statusLabels: Record<string, string> = { idle: '待启动', created: '初�
 const modeLabels: Record<string, string> = { IDEAL_NO_REFRACTION: '理想针孔', FLAT_SNELL_REFRACTION: '平面 Snell', WAVY_SNELL_REFRACTION: '波纹 Snell' }
 let socket: WebSocket | undefined, reconnect: ReturnType<typeof setTimeout> | undefined, refreshTimer: ReturnType<typeof setInterval> | undefined, replayTimer: ReturnType<typeof setInterval> | undefined
 let replayData: EventEnvelope[] = [], replaySummary: Record<string, unknown> = {}, disposed = false
+let eventTimer: ReturnType<typeof setTimeout> | undefined
+const pendingEvents: string[] = []
 
 /** 清空展示状态，不生成替代事件，也不改变后端运行。 */
 function clearDisplay() {
@@ -54,6 +57,8 @@ function clearDisplay() {
   simTime.value = 0; seq.value = 0; errors.value = []; recentEvents.value = []; metrics.value = {}
   lastObservation.value = null; lastRange.value = null; lastCommunication.value = null
   waterSurface.value = null
+  actualSpeed.value = null
+  selectedPayload.value = null
 }
 
 /** 接收后端事实事件，前端只将其映射为绘图状态。 */
@@ -93,7 +98,19 @@ function consume(value: unknown, replay = false) {
 function closeSocket() {
   if (reconnect) clearTimeout(reconnect)
   if (socket) { socket.onclose = null; socket.close(); socket = undefined }
+  clearTimeout(eventTimer)
+  eventTimer = undefined
+  pendingEvents.length = 0
   connected.value = false
+}
+
+/** 合并同一显示帧内的 Vue 更新，仍按原序消费每条事件。 */
+function flushEvents() {
+  eventTimer = undefined
+  for (const raw of pendingEvents.splice(0, 512)) {
+    try { consume(JSON.parse(raw)) } catch (e) { error.value = String(e) }
+  }
+  if (pendingEvents.length) eventTimer = setTimeout(flushEvents, 16)
 }
 
 /** 断线后按最后已接收序号重连，由后端补齐 JSONL 事件。 */
@@ -102,7 +119,10 @@ function connectEvents(id: string) {
   const protocol = location.protocol === 'https:' ? 'wss' : 'ws'
   socket = new WebSocket(`${protocol}://${location.host}/ws/runs/${id}?after_seq=${seq.value}`)
   socket.onopen = () => { connected.value = true }
-  socket.onmessage = message => { try { consume(JSON.parse(message.data)) } catch (e) { error.value = String(e) } }
+  socket.onmessage = message => {
+    pendingEvents.push(message.data)
+    if (!eventTimer) eventTimer = setTimeout(flushEvents, 16)
+  }
   socket.onclose = () => {
     connected.value = false
     if (!disposed && !replayMode.value && run.value?.run_id === id && ['running', 'paused', 'created'].includes(status.value)) reconnect = setTimeout(() => connectEvents(id), 1200)
@@ -127,18 +147,22 @@ async function start() {
   await action(async () => {
     if (!config.value) return
     closeSocket(); stopReplay(); replayMode.value = false; clearDisplay()
-    const result = await post<RunInfo>('/runs', { config: JSON.parse(JSON.stringify(config.value)) })
+    const result = await post<RunInfo>('/runs', { config: config.value, speed: speed.value })
     run.value = result; status.value = result.status; configHash.value = result.config_hash ?? ''
     if (result.config) config.value = result.config
-    connectEvents(result.run_id); await refreshRuns()
+    connectEvents(result.run_id)
+    void refreshRuns().catch(() => { /* 运行已启动，历史列表可手动刷新。 */ })
   })
 }
 
 async function control(command: string) {
+  if (!run.value || busy.value) return
   await action(async () => {
     if (!run.value) return
     const runId = run.value.run_id
     const result = await post<RunInfo>(`/runs/${runId}/${command}`, command === 'speed' ? { speed: Number(speed.value) } : {})
+    run.value = result
+    if (command === 'speed') return
     if (connected.value) {
       // HTTP 确认先于 WebSocket 队列到达；收到控制事件水位前保持忙碌，状态以 run_status 为准。
       if (!Number.isInteger(result.event_count)) throw new Error('控制已提交，但响应缺少事件水位，尚未确认显示同步。')
@@ -152,6 +176,12 @@ async function control(command: string) {
       await nextTick()
     } else if (result.status) status.value = result.status
   })
+}
+
+async function changeSpeed() {
+  if (!run.value || replayMode.value || !controls.value.stop) return
+  await control('speed')
+  speed.value = run.value.speed ?? 1
 }
 
 async function saveScenario() {
@@ -273,14 +303,19 @@ onMounted(async () => {
     adapterCatalog.value = await api<AdapterDescriptor[]>('/adapters')
   })
   refreshTimer = setInterval(async () => {
-    if (!run.value || replayMode.value) return
+    const id = run.value?.run_id
+    if (!id || replayMode.value) return
     try {
-      metrics.value = await api(`/runs/${run.value.run_id}/metrics`)
-      const snapshot = await api<RunInfo>(`/runs/${run.value.run_id}`)
+      const [summary, snapshot] = await Promise.all([
+        api<Record<string, unknown>>(`/runs/${id}/metrics`), api<RunInfo>(`/runs/${id}`),
+      ])
+      if (run.value?.run_id !== id || replayMode.value) return
+      metrics.value = summary
+      actualSpeed.value = snapshot.actual_speed ?? null
       // 连接正常时不让 HTTP 轮询越过尚未显示的已记录事件。
       if (snapshot.status && (!connected.value || (snapshot.event_count ?? Infinity) <= seq.value)) status.value = snapshot.status
     } catch { /* 连接状态由 WebSocket 展示，避免暂时断线覆盖其他操作错误。 */ }
-  }, 1200)
+  }, 750)
 })
 onBeforeUnmount(() => { disposed = true; closeSocket(); stopReplay(); if (refreshTimer) clearInterval(refreshTimer) })
 
@@ -351,8 +386,8 @@ onBeforeUnmount(()=>cancelColumnDrag?.())
       <main class="main-panel">
         <section class="run-bar panel">
           <div class="run-state"><i :class="status"></i><div><strong>{{ statusLabels[status] || status }}</strong><small>{{ replayMode ? 'JSONL 原始事件' : modeLabels[config?.mode || ''] || '等待场景' }}</small></div></div>
-          <div class="run-controls"><button class="primary-button" :disabled="busy || !controls.edit || !config" @click="start">▶ {{ run ? '新建运行' : '启动仿真' }}</button><button :disabled="busy || !controls.pause || replayMode" @click="control('pause')">Ⅱ 暂停</button><button :disabled="busy || !controls.resume || replayMode" @click="control('resume')">▷ 继续</button><button :disabled="busy || !controls.stop || replayMode" @click="control('stop')">■ 停止</button><select v-model.number="speed" aria-label="运行倍速" @change="run && !replayMode && control('speed')"><option :value=".5">0.5×</option><option :value="1">1×</option><option :value="2">2×</option><option :value="4">4×</option></select></div>
-          <div class="time-display"><b>{{ simTime.toFixed(1) }}</b><span>/ {{ config?.duration_s ?? 60 }} s</span></div>
+          <div class="run-controls"><button class="primary-button" :disabled="busy || !controls.edit || !config" @click="start">▶ {{ run ? '新建运行' : '启动仿真' }}</button><button :disabled="busy || !controls.pause || replayMode" @click="control('pause')">Ⅱ 暂停</button><button :disabled="busy || !controls.resume || replayMode" @click="control('resume')">▷ 继续</button><button :disabled="busy || !controls.stop || replayMode" @click="control('stop')">■ 停止</button><select v-model.number="speed" aria-label="运行倍速" :disabled="busy" @change="changeSpeed"><option :value=".5">0.5×</option><option :value="1">1×</option><option :value="2">2×</option><option :value="4">4×</option></select></div>
+          <div class="time-display"><b>{{ simTime.toFixed(1) }}</b><span>/ {{ config?.duration_s ?? 60 }} s</span><small v-if="status === 'running'" class="actual-speed" title="后端实测的仿真秒 / 墙钟秒">实测 {{ actualSpeed === null ? '—' : actualSpeed.toFixed(2) + '×' }}</small></div>
         </section>
 
         <DockPanel panel-id="scene" :title="panelTitles.scene" :closed="!!closedPanels.scene" @close="closePanel('scene')" class="scene-panel panel">

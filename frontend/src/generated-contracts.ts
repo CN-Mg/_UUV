@@ -16,7 +16,7 @@ export type ExperimentConfig = { comparison_vision_ids: Array<string> }
 /** 融合标定；已知时钟映射为 t_sim=scale*t_source+offset，不估计设备时钟。 */
 export type FusionContext = { schema_version: "1.0"; coordinate_frame: "LOCAL_TANK_RH"; anchors_world_m: Record<string, [number, number, number]>; sensor_extrinsics: Record<string, Array<Array<number>>>; clock_offsets_s: Record<string, number>; clock_scales: Record<string, number>; error_models: Record<string, ObservationErrorModel>; alignment_tolerance_s: number }
 
-/** 同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。 */
+/** 研究员可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。 */
 export type ObservationErrorModel = { distribution: "UNSPECIFIED" | "GAUSSIAN" | "EMPIRICAL"; unit: "m" | "px" | "s" | "m/s" | "dimensionless"; stddev: number | null; bias: number; description: string; evidence_status: "DEMO_UNCALIBRATED" }
 
 /** 单一水空气界面的折射率。 */

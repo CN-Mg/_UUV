@@ -96,11 +96,13 @@ def test_websocket_replays_exact_recorded_sequence(client):
 def test_pause_resume_stop_and_config_snapshot(client):
     config = ScenarioConfig().model_dump(mode="json")
     config["duration_s"] = 5
-    response = client.post("/api/runs", json={"config": config})
+    response = client.post("/api/runs", json={"config": config, "speed": .5})
     assert response.status_code == 200, response.text
+    assert response.json()["speed"] == .5
     rid = response.json()["run_id"]
     assert client.post(f"/api/runs/{rid}/pause").json()["status"] == "paused"
     paused_events = client.get(f"/api/runs/{rid}/events").json()
+    assert paused_events[0]["payload"]["speed"] == .5
     assert paused_events[-1]['event_type'] == 'run_status'
     assert paused_events[-1]['payload']['status'] == 'paused'
     time.sleep(.25)
@@ -121,6 +123,7 @@ def test_unknown_ids_and_invalid_configuration(client):
     assert client.get("/api/scenarios/missing").status_code == 404
     assert client.get("/api/runs/not-a-uuid/events").status_code == 404
     assert client.post("/api/runs", json={"config": {"dt_s": 0}}).status_code == 422
+    assert client.post("/api/runs", json={"speed": 0}).status_code == 422
     assert client.post("/api/runs", json={"unexpected": True}).status_code == 422
 
 

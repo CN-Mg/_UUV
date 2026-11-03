@@ -95,8 +95,13 @@ summary { cursor: pointer; font-size: 10px; color: #50718a; margin-bottom: 10px;
 .scene-toolbar h2 { font-size: 12px; font-weight: 500; }
 .scene-mode { color: #597990; font-size: 9px; margin-left: 6px; }
 .scene-toolbar button { pointer-events: all; }
-.scene-host { height: 450px; width: 100%; }
+.scene-host { height: 450px; width: 100%; position: relative; }
 .scene-host canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.render-info { position: absolute; inset: 32px 16px auto; display: flex; align-items: center; gap: 8px; width: fit-content; max-width: calc(100% - 32px); padding: 4px 7px; border: 1px solid #c7d7e3; border-radius: 2px; background: #f8fbfef2; color: #33485c; font-size: 10px; }
+.render-info span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.render-info b, .render-backend { flex: none; white-space: nowrap; }
+.render-info b, .actual-speed { font-variant-numeric: tabular-nums; }
+.actual-speed { display: block; color: #365c7a; white-space: nowrap; }
 .scene-overlay { position: absolute; left: 16px; top: 48px; display: flex; gap: 14px; font-size: 9px; color: #506b82; pointer-events: none; }
 .scene-overlay span { display: flex; gap: 5px; align-items: center; }
 .dot { display: inline-block; height: 5px; width: 5px; border-radius: 50%; flex-shrink: 0; }

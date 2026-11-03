@@ -46,7 +46,7 @@ for _role, _entries in REGISTRY.items():
 
 def register_adapter(role: str, algorithm_id: str, factory, *, algorithm_version: str,
                      supported_schema_versions=('1.0',), capabilities=(), replace=False) -> None:
-    """同学显式注册工厂与能力，拒绝无意覆盖已有实现和不支持的契约版本。"""
+    """研究员显式注册工厂与能力，拒绝无意覆盖已有实现和不支持的契约版本。"""
     if role not in REGISTRY or not algorithm_id or not algorithm_version:
         raise ValueError('角色、算法 ID 和版本必须明确')
     if algorithm_id in REGISTRY[role] and not replace:

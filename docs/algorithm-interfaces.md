@@ -1,4 +1,4 @@
-# 算法接口与同学接入指南（v1）
+# 算法接口与研究员接入指南（v1）
 
 当前代码实现六类接口和可运行基线，位置为 `backend/app/adapters/interfaces.py`；Pydantic 契约集中在 `backend/app/contracts/models.py`。全部默认数据属于 **DEMO_UNCALIBRATED**。下述固定布局和 NoOp 透传不代表完成课题 2.1、2.3。
 
@@ -30,7 +30,7 @@ optimize(request: LayoutRequest) -> LayoutResult
 
 结果包含算法 ID/版本、`cameras`、`evaluation`、`optimization_status`、`reason`。当前 `fixed_layout_v1` 只回传给定布局，状态 `NOT_OPTIMIZED`；没有相机、数量不符、超出位置或架高约束为 `INVALID_LAYOUT`。共享 `validate_layout_result(request,result)` 重新检查输出数量、身份与约束；声明有效结果却违反约束会被拒绝。`INVALID_LAYOUT`、`INFEASIBLE`、`FAILED` 可返回诊断布局与原因。
 
-精度关系通过可空 `precision_metric` 留给 2.1 同学：`kind` 为几何代理或线性化协方差，含 `value`、`unit`、必填 `assumptions` 和可选 `pixel_stddev_px`。正式算法应声明像素噪声、姿态、采样域、线性化和聚合假设；当前基线该字段为空，射线夹角没有伪装成米级精度。目标权重在固定布局中不执行优化。
+精度关系通过可空 `precision_metric` 留给 2.1 研究员：`kind` 为几何代理或线性化协方差，含 `value`、`unit`、必填 `assumptions` 和可选 `pixel_stddev_px`。正式算法应声明像素噪声、姿态、采样域、线性化和聚合假设；当前基线该字段为空，射线夹角没有伪装成米级精度。目标权重在固定布局中不执行优化。
 
 评价是深度网格上的 `GEOMETRIC_POINT_COVERAGE`：`single_view_coverage`、`multi_view_coverage`、`median_intersection_angle_rad`、`invalid_point_count`、`sample_count`。交会角使用水中段，以 `acos(abs(dot))` 消除平行/反向的伪良好交会，并在每个点取可用相机对的最佳锐角。这里没有像素噪声传播或真实检测概率，不称作真实定位精度。有限候选搜索算法只能声称候选集内最优。
 
@@ -95,7 +95,7 @@ update(batch: FusionBatch) -> FusionEstimate
 
 `FusionContext` 包含 `anchors_world_m`、`sensor_extrinsics`、`clock_offsets_s`、`clock_scales`、`alignment_tolerance_s`、`error_models`。配置保存在场景 `fusion_context`；锚点以场景顶层 `anchors_world_m` 为权威。4×4 外参须有齐次末行和右手正交旋转；时间比例须为正。误差模型为 `ObservationErrorModel`，明确分布（未知/高斯/经验）、单位、可空标准差、偏差和证据状态；早期字符串说明可读入并规范化为未知分布。
 
-已知设备映射使用 `t_sim=clock_scale*t_source+clock_offset`。提供原始时间时必须同时提供时钟 ID，外部输入声明的映射时刻须与已知映射相符；原始坐标系需要对应已知外参。该校验没有估计未知时钟或求解真实标定。`position_m` 是已经转换到 `LOCAL_TANK_RH` 的位置，原始 `source_frame_id` 只保留来源，避免再次重复转换。样例见 `fusion-context.json`。2.3 同学可在适配器内部研究对齐、状态传播与误差估计。
+已知设备映射使用 `t_sim=clock_scale*t_source+clock_offset`。提供原始时间时必须同时提供时钟 ID，外部输入声明的映射时刻须与已知映射相符；原始坐标系需要对应已知外参。该校验没有估计未知时钟或求解真实标定。`position_m` 是已经转换到 `LOCAL_TANK_RH` 的位置，原始 `source_frame_id` 只保留来源，避免再次重复转换。样例见 `fusion-context.json`。2.3 研究员可在适配器内部研究对齐、状态传播与误差估计。
 
 `FusionBatch` 含目标、输出参考时刻、可选视觉估计、距离列表、通信列表，各观测保留自己的时刻。融合适配器内部可研究时间对齐、状态传播和误差模型，不要求测量严格同时发生。
 
@@ -103,7 +103,7 @@ update(batch: FusionBatch) -> FusionEstimate
 
 ## 注册和切换
 
-注册表在 `backend/app/adapters/registry.py`，`catalog()` 可供 `/api/adapters` 查询算法 ID、真实声明版本、支持契约版本、能力列表和占位状态。`create_adapter` 检查工厂返回实例的 Protocol、ID 与版本；不是只检查字符串存在。以下步骤适用于同学的正式实现：
+注册表在 `backend/app/adapters/registry.py`，`catalog()` 可供 `/api/adapters` 查询算法 ID、真实声明版本、支持契约版本、能力列表和占位状态。`create_adapter` 检查工厂返回实例的 Protocol、ID 与版本；不是只检查字符串存在。以下步骤适用于研究员的正式实现：
 
 1. 新建独立算法文件，满足对应 Protocol，复用公共输入输出模型。
 2. 给算法唯一 ID 和版本，用 `register_adapter` 显式注册工厂、契约版本与能力；同 ID 替换须主动声明，不无意覆盖。
@@ -134,7 +134,7 @@ register_adapter(
 
 前一命令输出给定布局的评价、只用像素与标定的视觉估计、NoOp 透传结果。安装可编辑后端包后可从项目根目录执行。JSON 样例分别在 `tests/contracts/fixtures/`。契约测试含注册替换路由、协议可调用性、真值字段拒绝、序列化、单次测量交付与 NoOp 的来源声明。
 
-## 三位同学的独立 HTTP 联调
+## 三位研究员的独立 HTTP 联调
 
 后端启动后可从 OpenAPI `/docs` 调用，或读下面样例文件组成 JSON 请求：
 

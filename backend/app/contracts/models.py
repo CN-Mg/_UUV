@@ -104,7 +104,7 @@ class WaveConfig(Contract):
 
 
 class ObservationErrorModel(Contract):
-    """同学可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。"""
+    """研究员可配置的观测误差声明；UNSPECIFIED 不冒充已知高斯模型。"""
 
     distribution: Literal['UNSPECIFIED', 'GAUSSIAN', 'EMPIRICAL'] = 'UNSPECIFIED'
     unit: Literal['m', 'px', 's', 'm/s', 'dimensionless'] = 'm'

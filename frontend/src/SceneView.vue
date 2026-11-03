@@ -23,6 +23,9 @@ const emit = defineEmits<{
   'camera-moved': [value: { camera_id: string; position_m: Vector3 }]
 }>()
 const host = ref<HTMLDivElement>()
+const graphics = ref('正在初始化 WebGL 2')
+const gpuName = ref('')
+const fps = ref<number | null>(null)
 let renderer: THREE.WebGLRenderer | undefined
 let scene: THREE.Scene, view: THREE.PerspectiveCamera, orbit: OrbitControls, transform: TransformControls
 let frame = 0, resize: ResizeObserver, fallbackTank: THREE.Group, tankAsset: THREE.Group | undefined
@@ -32,7 +35,15 @@ let waterGeometryKey = ''
 const cameraGroups = new Map<string, THREE.Group>()
 const poseGroups = new Map<string, THREE.Group>()
 const lineGroups = new Map<string, THREE.Line>()
+const lastTrailPoints = new Map<string, Vector3>()
 let destroyed = false
+let sampleStart: number | null = null, renderedFrames = 0
+
+function resetFrameSample() {
+  sampleStart = null
+  renderedFrames = 0
+  fps.value = null
+}
 
 /** 水面只消费后端采样高度；显示放大使用对象变换，不改变采样或光学解算。 */
 function syncWater() {
@@ -151,15 +162,35 @@ function syncPoses() {
     }
     group.position.fromArray(pose.position_m); group.rotation.z = pose.yaw_rad || 0
   }
-  for (const [key, line] of lineGroups) if (!props.trails[key]) { scene.remove(line); lineGroups.delete(key) }
+  for (const [key, line] of lineGroups) if (!props.trails[key]) {
+    scene.remove(line)
+    line.geometry.dispose()
+    ;(line.material as THREE.Material).dispose()
+    lineGroups.delete(key)
+    lastTrailPoints.delete(key)
+  }
   for (const [key, points] of Object.entries(props.trails)) {
-    if (points.length < 2) continue
+    const last = points.at(-1)
+    if (points.length < 2 || !last || lastTrailPoints.get(key) === last) continue
     let line = lineGroups.get(key)
     if (!line) {
-      line = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: traceColor(key), transparent: true, opacity: key.startsWith('truth:') ? .5 : .9 }))
+      const geometry = new THREE.BufferGeometry()
+      geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(1500 * 3), 3).setUsage(THREE.DynamicDrawUsage))
+      line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: traceColor(key), transparent: true, opacity: key.startsWith('truth:') ? .5 : .9 }))
+      line.frustumCulled = false
       scene.add(line); lineGroups.set(key, line)
     }
-    line.geometry.dispose(); line.geometry = new THREE.BufferGeometry().setFromPoints(points.map(p => new THREE.Vector3(...p)))
+    const positions = line.geometry.getAttribute('position') as THREE.BufferAttribute
+    const previousCount = line.geometry.drawRange.count
+    // 已满时应用滑动窗口；追加期间仅上传新坐标。
+    const start = previousCount < points.length && points[previousCount - 1] === lastTrailPoints.get(key)
+      ? previousCount : 0
+    for (let i = start; i < points.length; i++) positions.setXYZ(i, ...points[i])
+    positions.clearUpdateRanges()
+    positions.addUpdateRange(start * 3, (points.length - start) * 3)
+    positions.needsUpdate = true
+    line.geometry.setDrawRange(0, points.length)
+    lastTrailPoints.set(key, last)
   }
 }
 
@@ -170,7 +201,22 @@ onMounted(() => {
   if (!host.value) return
   try {
     scene = new THREE.Scene(); scene.background = new THREE.Color(0xeaf2f8); scene.fog = new THREE.Fog(0xeaf2f8, 16, 32)
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false }); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' })
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5))
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    const gl = renderer.getContext()
+    const identifyRenderer = () => {
+      const debug = gl.getExtension('WEBGL_debug_renderer_info')
+      gpuName.value = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) || '' : ''
+      graphics.value = /swiftshader|llvmpipe|softpipe|software|basic render driver|warp/i.test(gpuName.value)
+        ? 'WebGL 2 · 软件渲染' : 'WebGL 2'
+    }
+    identifyRenderer()
+    renderer.domElement.addEventListener('webglcontextlost', () => {
+      graphics.value = 'WebGL 上下文丢失'
+      fps.value = null
+    })
+    renderer.domElement.addEventListener('webglcontextrestored', identifyRenderer)
     host.value.appendChild(renderer.domElement)
     view = new THREE.PerspectiveCamera(43, 1, .05, 100); view.up.set(0, 0, 1)
     orbit = new OrbitControls(view, renderer.domElement); orbit.enableDamping = true; orbit.maxDistance = 22; orbit.minDistance = 2.5; resetView()
@@ -197,12 +243,35 @@ onMounted(() => {
       emit('camera-moved', { camera_id: transform.object.name, position_m: [Number(pos.x.toFixed(3)), Number(pos.y.toFixed(3)), Number(Math.max(.05, pos.z).toFixed(3))] })
     })
     resize = new ResizeObserver(() => { if (!host.value || !renderer) return; const { width, height } = host.value.getBoundingClientRect(); renderer.setSize(width, height); view.aspect = width / Math.max(height, 1); view.updateProjectionMatrix() }); resize.observe(host.value)
-    const animate = () => { if (destroyed) return; orbit.update(); renderer?.render(scene, view); frame = requestAnimationFrame(animate) }; animate()
+    document.addEventListener('visibilitychange', resetFrameSample)
+    const animate = (now: number) => {
+      if (destroyed || !renderer) return
+      frame = requestAnimationFrame(animate)
+      if (document.hidden || !host.value?.clientWidth || !host.value.clientHeight || gl.isContextLost()) {
+        resetFrameSample()
+        return
+      }
+      orbit.update()
+      renderer.render(scene, view)
+      if (sampleStart === null) {
+        sampleStart = now
+        return
+      }
+      renderedFrames++
+      if (now - sampleStart >= 500) {
+        fps.value = Math.round(1000 * renderedFrames / (now - sampleStart))
+        sampleStart = now
+        renderedFrames = 0
+      }
+    }
+    frame = requestAnimationFrame(animate)
     const loader = new GLTFLoader()
     loader.load('/assets/models/uuv_001.glb', gltf => {
       if (destroyed) return; vehicleTemplate = gltf.scene
       for (const [id, group] of poseGroups) if (id.startsWith('truth:')) { scene.remove(group); poseGroups.delete(id) }
       syncPoses(); emit('asset-state', { key: 'UUV-001', status: 'GLB 已加载' })
+      // 在首个真值事件前预热艇体材质，避免首帧才开始编译着色器。
+      void renderer?.compileAsync(vehicleTemplate, view, scene).catch(() => {})
     }, undefined, () => emit('asset-state', { key: 'UUV-001', status: '加载失败 · 几何体降级' }))
     loader.load('/assets/scenes/m1_tank_scene.glb', gltf => {
       if (destroyed) return
@@ -223,18 +292,31 @@ onMounted(() => {
     }, undefined, () => emit('asset-state', { key: 'Blender 场景', status: '加载失败 · 几何体降级' }))
     loader.load('/assets/scenes/camera_unit.glb', gltf => { if (destroyed) return; cameraTemplate = gltf.scene; syncScene(); emit('asset-state', { key: 'Blender 相机', status: 'GLB 已加载' }) }, undefined, () => emit('asset-state', { key: 'Blender 相机', status: '加载失败 · 几何体降级' }))
     syncScene(); syncPoses()
-  } catch (error) { emit('asset-state', { key: '三维显示', status: `WebGL 不可用：${String(error)}` }) }
+  } catch (error) {
+    graphics.value = 'WebGL 不可用'
+    emit('asset-state', { key: '三维显示', status: `WebGL 不可用：${String(error)}` })
+  }
 })
 
 watch(() => props.config, syncScene, { deep: true })
-watch(() => [props.selectedCamera, props.editable], () => { syncScene(); syncTransform() })
-watch(() => [props.poses, props.trails], syncPoses, { deep: true })
+watch(() => props.selectedCamera, syncScene)
+watch(() => props.editable, syncTransform)
+watch(() => [Object.values(props.poses), Object.values(props.trails).map(points => points.at(-1))], syncPoses)
 watch(() => [props.waterSurface, props.showWater, props.waterExaggeration], syncWater)
 onBeforeUnmount(() => {
+  document.removeEventListener('visibilitychange', resetFrameSample)
   destroyed = true; cancelAnimationFrame(frame); resize?.disconnect(); transform?.dispose(); orbit?.dispose()
   scene?.traverse(node => { const object = node as THREE.Mesh; object.geometry?.dispose(); if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach(material => material.dispose()) })
   renderer?.dispose()
 })
 </script>
 
-<template><div ref="host" class="scene-host" aria-label="UUV 水池三维场景" :data-water-time="waterSurface?.sim_time_s" :data-water-model="waterSurface?.model_kind ?? 'mean-plane-preview'" :data-water-scale="waterExaggeration" :data-water-grid="waterSurface ? `${waterSurface.rows}x${waterSurface.columns}` : 'none'"></div></template>
+<template>
+  <div ref="host" class="scene-host" aria-label="UUV 水池三维场景" :data-water-time="waterSurface?.sim_time_s" :data-water-model="waterSurface?.model_kind ?? 'mean-plane-preview'" :data-water-scale="waterExaggeration" :data-water-grid="waterSurface ? `${waterSurface.rows}x${waterSurface.columns}` : 'none'">
+    <div class="render-info" aria-label="渲染性能">
+      <span :title="gpuName || '浏览器未公开 GPU 型号'">GPU · {{ gpuName || graphics }}</span>
+      <span v-if="gpuName" class="render-backend">{{ graphics }}</span>
+      <b>{{ fps ?? '—' }} FPS</b>
+    </div>
+  </div>
+</template>

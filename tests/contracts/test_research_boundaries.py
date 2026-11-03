@@ -141,7 +141,7 @@ def test_registration_version_and_real_bad_plugin_failure(monkeypatch):
         register_adapter('vision', 'future', lambda **kw: None, algorithm_version='1', supported_schema_versions=['9.0'])
 
     class BadVision(LeastSquaresLocalizer):
-        """返回错误目标的同学实现，用来测试真实调度拒绝污染数据。"""
+        """返回错误目标的研究员实现，用来测试真实调度拒绝污染数据。"""
         def __init__(self):
             super().__init__('bad_peer_v1')
 

@@ -21,7 +21,7 @@ from .validation import layout_constraint_violations
 
 
 class FixedLayoutAdapter:
-    """仅评价并回传已有布局，正式优化由 2.1 同学接入。"""
+    """仅评价并回传已有布局，正式优化由 2.1 研究员接入。"""
 
     algorithm_id = 'fixed_layout_v1'
     algorithm_version = '1.0.0'

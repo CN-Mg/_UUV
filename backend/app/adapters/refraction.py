@@ -1,12 +1,14 @@
 """单界面 Snell 传播；波面交点由费马光程驻值求出。"""
 
+from math import hypot
+
 import numpy as np
 from scipy.optimize import brentq, root
 
 from app.contracts import BackprojectionRequest, ProjectionRequest, ProjectionResult, RayPath
 
 from .geometry import camera_rotation, flat_intersections, pinhole_many, unit
-from .wave import FlatSurface
+from .wave import FlatSurface, SeededMultiSineSurface
 
 
 def projection_result(point, camera, intersection, water_direction) -> ProjectionResult:
@@ -54,33 +56,50 @@ class SnellRefraction:
     def __init__(self, surface=None):
         """允许生成器使用真实波面，基线估计器独立使用平均平面。"""
         self.surface = surface or FlatSurface()
+        # 第三方波面始终走公开的 sample 契约。
+        self._height_gradient = (self.surface.height_gradient if type(self.surface) is SeededMultiSineSurface
+                                 else self._sample_height_gradient)
+
+    def _sample_height_gradient(self, x, y, time):
+        sample = self.surface.sample(x, y, time)
+        return sample.height_m, *sample.gradient
 
     def project(self, request: ProjectionRequest) -> ProjectionResult:
         """求满足 Snell 条件的界面交点，再投影空气段。"""
         p = np.asarray(request.point_world_m)
         c = np.asarray(request.camera.position_m)
-        if p[2] >= self.surface.sample(*p[:2], request.sim_time_s).height_m or c[2] <= 0:
+        time = request.sim_time_s
+        if p[2] >= self._height_gradient(*p[:2], time)[0] or c[2] <= 0:
             return ProjectionResult(status='INVALID_MEDIA_GEOMETRY')
         q = flat_intersections(p[None, :], request.camera, request.optics)[0]
         if not isinstance(self.surface, FlatSurface):
+            px, py, pz = p.tolist()
+            cx, cy, cz = c.tolist()
+            nw, na = request.optics.n_water, request.optics.n_air
+
             # 费马光程 L=nw|Q-P|+na|Q-C| 对界面参数 x,y 的梯度为零。
             def gradient(xy):
-                sample = self.surface.sample(*xy, request.sim_time_s)
-                point = np.array([*xy, sample.height_m])
-                derivative = (request.optics.n_water*unit(point-p)
-                              + request.optics.n_air*unit(point-c))
-                return derivative[:2] + derivative[2]*np.asarray(sample.gradient)
+                x, y = xy.tolist()
+                height, gx, gy = self._height_gradient(x, y, time)
+                wx, wy, wz = x-px, y-py, height-pz
+                ax, ay, az = x-cx, y-cy, height-cz
+                water_length, air_length = hypot(wx, wy, wz), hypot(ax, ay, az)
+                if min(water_length, air_length) < 1e-12:
+                    raise ValueError('不能归一化零向量')
+                water_scale, air_scale = nw/water_length, na/air_length
+                dz = water_scale*wz + air_scale*az
+                return (water_scale*wx + air_scale*ax + dz*gx,
+                        water_scale*wy + air_scale*ay + dz*gy)
 
             result = root(gradient, q[:2], tol=1e-9)
             if not result.success or np.linalg.norm(gradient(result.x)) > 1e-7:
                 return ProjectionResult(status='SURFACE_SOLVER_FAILED')
-            sample = self.surface.sample(*result.x, request.sim_time_s)
-            q = np.array([*result.x, sample.height_m])
+            q = np.array([*result.x, self._height_gradient(*result.x, time)[0]])
             # 检查直线段中没有额外穿越波面，避免把多次折射当单界面路径。
             for endpoint, above in [(c, True), (p, False)]:
                 for fraction in (.25, .5, .75):
                     test = q + fraction*(endpoint-q)
-                    h = self.surface.sample(*test[:2], request.sim_time_s).height_m
+                    h = self._height_gradient(*test[:2], time)[0]
                     if (above and test[2] < h-1e-8) or (not above and test[2] > h+1e-8):
                         return ProjectionResult(status='MULTIPLE_INTERSECTIONS')
         return projection_result(q, request.camera, q, unit(p-q))

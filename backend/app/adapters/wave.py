@@ -1,5 +1,7 @@
 """固定种子的参数化波面，不作水动力学标定声明。"""
 
+from math import cos, sin, sqrt
+
 import numpy as np
 
 from app.contracts import SurfaceSample, WaveConfig
@@ -37,16 +39,25 @@ class SeededMultiSineSurface:
         self.ky = k * np.sin(config.directions_rad)
         self.omega = 2 * np.pi / np.array(config.periods_s)
         self.phase = np.random.default_rng(seed).uniform(0, 2*np.pi, len(k))
+        self._components = tuple(zip(*(values.tolist() for values in
+            (self.amplitudes, self.kx, self.ky, self.omega, self.phase)), strict=True))
 
     def sample(self, x_m: float, y_m: float, sim_time_s: float) -> SurfaceSample:
         """显式计算 ∂h/∂x、∂h/∂y 并归一化界面法向量。"""
-        phase = self.kx*x_m + self.ky*y_m - self.omega*sim_time_s + self.phase
-        h = float(np.sum(self.amplitudes * np.sin(phase)))
-        gx = float(np.sum(self.amplitudes*self.kx*np.cos(phase)))
-        gy = float(np.sum(self.amplitudes*self.ky*np.cos(phase)))
-        normal = np.array([-gx, -gy, 1.])
-        normal /= np.linalg.norm(normal)
-        return SurfaceSample(height_m=h, gradient=(gx, gy), normal_world=tuple(normal))
+        h, gx, gy = self.height_gradient(x_m, y_m, sim_time_s)
+        length = sqrt(1 + gx*gx + gy*gy)
+        return SurfaceSample(height_m=h, gradient=(gx, gy), normal_world=(-gx/length, -gy/length, 1/length))
+
+    def height_gradient(self, x_m: float, y_m: float, sim_time_s: float) -> tuple[float, float, float]:
+        """返回高度与两个偏导，供内置折射求解器的迭代内环使用。"""
+        h = gx = gy = 0.
+        for amplitude, kx, ky, omega, phase0 in self._components:
+            phase = kx*x_m + ky*y_m - omega*sim_time_s + phase0
+            h += amplitude*sin(phase)
+            slope = amplitude*cos(phase)
+            gx += kx*slope
+            gy += ky*slope
+        return h, gx, gy
 
     def sample_grid(self, xs, ys, sim_time_s):
         """同一组系数批量采样显示网格；无独立显示波场、无 RNG 推进。"""

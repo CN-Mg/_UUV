@@ -44,7 +44,7 @@ def asset_hashes() -> dict[str, str]:
 class RunState:
     """每个运行拥有独立计算引擎、线程、锁、状态和测量缓冲。"""
 
-    def __init__(self, config: ScenarioConfig, run_dir: Path, index_callback):
+    def __init__(self, config: ScenarioConfig, run_dir: Path, index_callback, speed: float = 1.0):
         self.config = config
         # 在产生运行目录前验证适配器与几何配置，拒绝输入不留下空运行。
         self.engine = SimulationEngine(config)
@@ -52,11 +52,12 @@ class RunState:
         self.run_dir = run_dir
         self.run_dir.mkdir(parents=True, exist_ok=False)
         self.lock = threading.RLock()
-        self.wake = threading.Event()
+        self.pacing = threading.Condition(self.lock)
         self.step_finished = threading.Event()
         self.step_finished.set()
         self.status = "running"
-        self.speed = 1.0
+        self.speed = speed
+        self.actual_speed: float | None = None
         self.tick_index = 0
         self.sim_time_s = 0.0
         self.events: list[dict] = []
@@ -103,19 +104,22 @@ class RunState:
         )
 
     def emit(self, event_type: str, payload: dict) -> dict:
-        """先追加落盘，再广播缓存；所有事件由同一把锁确定全序。"""
+        """写入单条控制或测量事件。"""
+        return self.emit_many([(event_type, payload)])[0]
+
+    def emit_many(self, output: list[tuple[str, dict]]) -> list[dict]:
+        """同一数学步一次追加 JSONL，再发布缓存；保留每条事件的独立序号。"""
         with self.lock:
-            event = {
+            events = [{
                 "scenario_id": self.config.scenario_id, "run_id": self.run_id,
-                "sim_time_s": self.sim_time_s, "event_seq": len(self.events) + 1,
+                "sim_time_s": self.sim_time_s, "event_seq": seq,
                 "event_type": event_type, "schema_version": "1.0", "payload": payload,
-            }
-            line = json.dumps(event, ensure_ascii=False, allow_nan=False)
+            } for seq, (event_type, payload) in enumerate(output, len(self.events) + 1)]
+            lines = "".join(json.dumps(event, ensure_ascii=False, allow_nan=False) + "\n" for event in events)
             with (self.run_dir / "events.jsonl").open("a", encoding="utf-8") as stream:
-                stream.write(line + "\n")
-                stream.flush()
-            self.events.append(event)
-            return event
+                stream.write(lines)
+            self.events.extend(events)
+            return events
 
     def snapshot(self) -> dict:
         """返回前端控制面需要的状态，配置快照在运行中不可变。"""
@@ -124,6 +128,7 @@ class RunState:
                 "run_id": self.run_id, "scenario_id": self.config.scenario_id,
                 "status": self.status, "sim_time_s": self.sim_time_s,
                 "event_count": len(self.events), "speed": self.speed,
+                "actual_speed": self.actual_speed if self.status == "running" else None,
                 "config_hash": self.metadata["config_hash"], "config": self.config.model_dump(mode="json"),
             }
 
@@ -143,19 +148,18 @@ class RunState:
         """仅整数步驱动数学仿真；耗时超预算时降低实际速率，不丢样本。"""
         try:
             total = math.ceil(self.config.duration_s / self.config.dt_s)
+            rate_start = time.perf_counter()
+            rate_tick = 0
+            next_metrics = rate_start
             while self.tick_index < total:
-                with self.lock:
-                    status = self.status
-                if status in TERMINAL:
-                    break
-                if status == "paused":
-                    self.wake.wait(.1)
-                    self.wake.clear()
-                    continue
-                start = time.perf_counter()
-                with self.lock:
-                    if self.status != "running":
-                        continue
+                with self.pacing:
+                    if self.status == "paused":
+                        self.pacing.wait_for(lambda: self.status != "paused")
+                        rate_start = time.perf_counter()
+                        rate_tick = self.tick_index
+                    if self.status in TERMINAL:
+                        break
+                    start = time.perf_counter()
                     self.step_finished.clear()
                     self.sim_time_s = self.tick_index * self.config.dt_s
                     ready = [m for m in self.pending_measurements if m["measurement_time_s"] <= self.sim_time_s]
@@ -164,18 +168,30 @@ class RunState:
                         self.engine.push_measurement(measurement)
                 # 不持运行锁计算，保证暂停、停止等 HTTP 请求不会被 NLS 阻塞。
                 output = self.engine.step(self.tick_index)
+                now = time.perf_counter()
+                summary = None
+                if now >= next_metrics or self.tick_index + 1 == total:
+                    summary = self.engine.metrics()
+                    next_metrics = now + .25
                 computed = (time.perf_counter() - start) * 1000
-                with self.lock:
+                with self.pacing:
                     # 同一步已完成的结果保留；暂停只影响下一步，不撤销已产生的事实。
-                    for event_type, payload in output:
-                        self.emit(event_type, payload)
+                    self.emit_many(output)
                     self.compute_ms.append(computed)
-                    self.cached_metrics = self.engine.metrics()
+                    if summary is not None:
+                        self.cached_metrics = summary
                     self.tick_index += 1
                     self.step_finished.set()
-                    delay = max(0.0, self.config.dt_s / self.speed - (time.perf_counter() - start))
-                self.wake.wait(delay)
-                self.wake.clear()
+                    # 倍速调整唤醒等待并按新倍率重算本步剩余间隔。
+                    while self.status == "running":
+                        delay = self.config.dt_s / self.speed - (time.perf_counter() - start)
+                        if delay <= 0:
+                            break
+                        self.pacing.wait(delay)
+                    elapsed = time.perf_counter() - rate_start
+                    if elapsed >= .5 and self.status == "running":
+                        self.actual_speed = (self.tick_index - rate_tick) * self.config.dt_s / elapsed
+                        rate_start, rate_tick = time.perf_counter(), self.tick_index
             with self.lock:
                 if self.status not in TERMINAL:
                     self.status = "completed"
@@ -187,7 +203,9 @@ class RunState:
                 self.emit("run_status", {"status": "failed", "reason": self.metadata["failure"]})
         finally:
             self.step_finished.set()
+            summary = self.engine.metrics()
             with self.lock:
+                self.cached_metrics = summary
                 for measurement in self.pending_measurements:
                     self.emit("measurement_unused", {
                         "measurement_id": measurement["measurement_id"],
@@ -208,7 +226,8 @@ class RunState:
                 if action == "pause" and self.status != "running":
                     raise ValueError("只有运行中可以暂停")
                 self.status = "paused" if action == "pause" else "stopped"
-                self.wake.set()
+                self.actual_speed = None
+                self.pacing.notify_all()
             # 不持锁等待当前步完成；先落盘完整观测与波面，再发出暂停确认。
             if not self.step_finished.wait(timeout=30):
                 raise ValueError("当前数学步尚未完成，暂停数据仍在同步")
@@ -237,7 +256,7 @@ class RunState:
                 raise ValueError("未知控制动作")
             self.emit("run_status", {"status": self.status, "speed": self.speed, "action": action})
             self.write_metadata()
-            self.wake.set()
+            self.pacing.notify_all()
             return self.snapshot()
 
     def inject(self, measurement: dict) -> dict:
@@ -337,12 +356,12 @@ class RunManager:
             conn.execute("INSERT OR REPLACE INTO scenarios VALUES (?,?)", (config.scenario_id, str(path)))
         return config
 
-    def create(self, config: ScenarioConfig) -> RunState:
+    def create(self, config: ScenarioConfig, speed: float = 1.0) -> RunState:
         """创建不可变配置快照，并启动独立计算线程。"""
         active = sum(r.status not in TERMINAL for r in self.runs.values())
         if active >= 4:
             raise ValueError("基础版本最多同时运行四个场景，请先停止已有运行")
-        state = RunState(config, self.data_root / "runs" / str(uuid.uuid4()), self.index)
+        state = RunState(config, self.data_root / "runs" / str(uuid.uuid4()), self.index, speed)
         self.runs[state.run_id] = state
         self.index(state.snapshot())
         state.thread.start()
@@ -371,7 +390,7 @@ class RunManager:
         if run_id in self.runs:
             state = self.runs[run_id]
             with state.lock:
-                return [e for e in state.events if e["event_seq"] > after_seq]
+                return state.events[max(0, after_seq):]
         path = self.run_path(run_id) / "events.jsonl"
         return [e for line in path.read_text(encoding="utf-8").splitlines() if (e := json.loads(line))["event_seq"] > after_seq]
 
