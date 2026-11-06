@@ -29,10 +29,11 @@ const fps = ref<number | null>(null)
 let renderer: THREE.WebGLRenderer | undefined
 let scene: THREE.Scene, view: THREE.PerspectiveCamera, orbit: OrbitControls, transform: TransformControls
 let frame = 0, resize: ResizeObserver, fallbackTank: THREE.Group, tankAsset: THREE.Group | undefined
-let cameraTemplate: THREE.Group | undefined, vehicleTemplate: THREE.Group | undefined
+let cameraTemplate: THREE.Group | undefined, vehicleTemplate: THREE.Group | undefined, poleTemplate: THREE.Group | undefined
 let waterGroup: THREE.Group, waterMesh: THREE.Mesh, waterWire: THREE.Mesh
 let waterGeometryKey = ''
 const cameraGroups = new Map<string, THREE.Group>()
+const cameraPoles = new Map<string, THREE.Group>()
 const poseGroups = new Map<string, THREE.Group>()
 const lineGroups = new Map<string, THREE.Line>()
 const lastTrailPoints = new Map<string, Vector3>()
@@ -116,6 +117,9 @@ function syncScene() {
   if (tankAsset) tankAsset.scale.set(config.tank.length_m / 5, config.tank.width_m / 5, config.tank.depth_m / 2)
   for (const [id, group] of cameraGroups) if (!config.cameras.some(c => c.camera_id === id)) {
     scene.remove(group); cameraGroups.delete(id)
+    const pole = cameraPoles.get(id)
+    if (pole) scene.remove(pole)
+    cameraPoles.delete(id)
   }
   for (const calibration of config.cameras) {
     let group = cameraGroups.get(calibration.camera_id)
@@ -128,6 +132,20 @@ function syncScene() {
     group.quaternion.copy(displayCamera.quaternion)
     group.add(cameraTemplate ? gltfBody(cameraTemplate) : fallbackCamera())
     group.add(frustum(calibration, calibration.camera_id === props.selectedCamera ? 0x007acc : 0x638ca7))
+    let pole = cameraPoles.get(calibration.camera_id)
+    if (!pole) {
+      pole = new THREE.Group()
+      const fallback = new THREE.Mesh(new THREE.CylinderGeometry(.024, .024, 1), new THREE.MeshStandardMaterial({ color: 0x8399aa }))
+      fallback.rotation.x = Math.PI / 2
+      fallback.position.z = .5
+      pole.add(poleTemplate ? gltfBody(poleTemplate) : fallback)
+      cameraPoles.set(calibration.camera_id, pole)
+      scene.add(pole)
+    }
+    // 支架接点跟随相机外参，立杆从池底竖直延伸到接点。
+    const top = new THREE.Vector3(0, 0, .145).applyQuaternion(group.quaternion).add(group.position)
+    pole.position.set(top.x, top.y, -config.tank.depth_m)
+    pole.scale.z = top.z + config.tank.depth_m
   }
   syncTransform()
   syncWater()
@@ -143,15 +161,30 @@ function syncTransform() {
 /** 展示姿态由后端事件提供；估计位置使用彩色轮廓点表示。 */
 function syncPoses() {
   if (!scene) return
-  for (const [key, group] of poseGroups) if (!props.poses[key]) { scene.remove(group); poseGroups.delete(key) }
-  for (const [key, pose] of Object.entries(props.poses)) {
+  const displayPoses = { ...props.poses }
+  for (const target of props.config?.targets ?? []) {
+    const key = `truth:${target.target_id}`
+    if (displayPoses[key]) continue
+    const phase = target.phase_rad
+    displayPoses[key] = {
+      target_id: target.target_id,
+      position_m: [
+        target.center_xy_m[0] + target.radius_m * Math.cos(phase),
+        target.center_xy_m[1] + target.radius_m * Math.sin(phase),
+        -target.depth_m,
+      ],
+      yaw_rad: phase + Math.PI / 2,
+    }
+  }
+  for (const [key, group] of poseGroups) if (!displayPoses[key]) { scene.remove(group); poseGroups.delete(key) }
+  for (const [key, pose] of Object.entries(displayPoses)) {
     let group = poseGroups.get(key)
     if (!group) {
       group = new THREE.Group()
       if (key.startsWith('truth:')) {
         if (vehicleTemplate) group.add(gltfBody(vehicleTemplate))
         else {
-          const hull = new THREE.Mesh(new THREE.CapsuleGeometry(.17, 2.2, 6, 16), new THREE.MeshStandardMaterial({ color: 0xe9aa47, roughness: .4 }))
+          const hull = new THREE.Mesh(new THREE.CapsuleGeometry(.045, .51, 6, 16), new THREE.MeshStandardMaterial({ color: 0xe9aa47, roughness: .4 }))
           hull.rotation.z = Math.PI / 2; group.add(hull)
         }
       } else {
@@ -160,7 +193,10 @@ function syncPoses() {
       }
       scene.add(group); poseGroups.set(key, group)
     }
-    group.position.fromArray(pose.position_m); group.rotation.z = pose.yaw_rad || 0
+    group.position.fromArray(pose.position_m)
+    const q = pose.orientation_wxyz
+    if (q) group.quaternion.set(q[1], q[2], q[3], q[0]).normalize()
+    else group.rotation.set(0, 0, pose.yaw_rad || 0)
   }
   for (const [key, line] of lineGroups) if (!props.trails[key]) {
     scene.remove(line)
@@ -266,7 +302,7 @@ onMounted(() => {
     }
     frame = requestAnimationFrame(animate)
     const loader = new GLTFLoader()
-    loader.load('/assets/models/uuv_001.glb', gltf => {
+    loader.load('/assets/models/micro_uuv/micro_uuv.glb', gltf => {
       if (destroyed) return; vehicleTemplate = gltf.scene
       for (const [id, group] of poseGroups) if (id.startsWith('truth:')) { scene.remove(group); poseGroups.delete(id) }
       syncPoses(); emit('asset-state', { key: 'UUV-001', status: 'GLB 已加载' })
@@ -290,7 +326,15 @@ onMounted(() => {
       tankAsset = gltfBody(gltf.scene); scene.add(tankAsset); fallbackTank.visible = false; syncScene()
       emit('asset-state', { key: 'Blender 场景', status: 'GLB 已加载' })
     }, undefined, () => emit('asset-state', { key: 'Blender 场景', status: '加载失败 · 几何体降级' }))
-    loader.load('/assets/scenes/camera_unit.glb', gltf => { if (destroyed) return; cameraTemplate = gltf.scene; syncScene(); emit('asset-state', { key: 'Blender 相机', status: 'GLB 已加载' }) }, undefined, () => emit('asset-state', { key: 'Blender 相机', status: '加载失败 · 几何体降级' }))
+    loader.load('/assets/models/micro_uuv/pole_camera.glb', gltf => { if (destroyed) return; cameraTemplate = gltf.scene; syncScene(); emit('asset-state', { key: 'Blender 相机', status: 'GLB 已加载' }) }, undefined, () => emit('asset-state', { key: 'Blender 相机', status: '加载失败 · 几何体降级' }))
+    loader.load('/assets/models/micro_uuv/camera_pole.glb', gltf => {
+      if (destroyed) return
+      poleTemplate = gltf.scene
+      for (const pole of cameraPoles.values()) scene.remove(pole)
+      cameraPoles.clear()
+      syncScene()
+      emit('asset-state', { key: '相机立杆', status: 'GLB 已加载' })
+    }, undefined, () => emit('asset-state', { key: '相机立杆', status: '加载失败 · 几何体降级' }))
     syncScene(); syncPoses()
   } catch (error) {
     graphics.value = 'WebGL 不可用'
@@ -298,7 +342,7 @@ onMounted(() => {
   }
 })
 
-watch(() => props.config, syncScene, { deep: true })
+watch(() => props.config, () => { syncScene(); syncPoses() }, { deep: true })
 watch(() => props.selectedCamera, syncScene)
 watch(() => props.editable, syncTransform)
 watch(() => [Object.values(props.poses), Object.values(props.trails).map(points => points.at(-1))], syncPoses)
@@ -316,6 +360,7 @@ onBeforeUnmount(() => {
     <div class="render-info" aria-label="渲染性能">
       <span :title="gpuName || '浏览器未公开 GPU 型号'">GPU · {{ gpuName || graphics }}</span>
       <span v-if="gpuName" class="render-backend">{{ graphics }}</span>
+      <span v-if="config?.targets.length && !Object.keys(poses).some(key => key.startsWith('truth:'))">初始位姿预览</span>
       <b>{{ fps ?? '—' }} FPS</b>
     </div>
   </div>

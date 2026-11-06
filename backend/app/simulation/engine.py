@@ -1,6 +1,7 @@
 """每步生成事件载荷；存储、墙钟节奏和网络由运行服务负责。"""
 
 from collections import Counter
+from pathlib import Path
 
 import numpy as np
 from pydantic import BaseModel
@@ -28,6 +29,8 @@ from app.contracts import (
     WaterSurfaceSnapshot,
 )
 
+MICRO_UUV_MARKERS = Path(__file__).resolve().parents[3] / 'assets/models/micro_uuv/marker_geometry.json'
+
 
 class SimulationEngine:
     """仿真唯一计算权威；估计器只收到单独构造的白名单请求。"""
@@ -36,7 +39,7 @@ class SimulationEngine:
         """每个运行创建独立随机源、估计器、测量缓冲及评价记录。"""
         self.config = config.model_copy(deep=True)
         config = self.config
-        self.markers = load_markers()
+        self.markers = load_markers(MICRO_UUV_MARKERS)
         self.calibration = CalibrationContext(cameras=config.cameras, markers=self.markers,
             optics=config.optics, use_refraction=config.mode != 'IDEAL_NO_REFRACTION')
         self.rng = np.random.default_rng(config.seed)

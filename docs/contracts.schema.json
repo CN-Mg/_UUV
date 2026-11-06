@@ -546,6 +546,20 @@
             "title": "Black Square Size M",
             "type": "number"
           },
+          "surface_radius_m": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "沿 v 轴弯曲的圆柱半径 m，空值表示平面",
+            "title": "Surface Radius M"
+          },
           "corner_order": {
             "default": "bottom-left,bottom-right,top-right,top-left",
             "title": "Corner Order",
@@ -3077,6 +3091,20 @@
         "title": "Black Square Size M",
         "type": "number"
       },
+      "surface_radius_m": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "沿 v 轴弯曲的圆柱半径 m，空值表示平面",
+        "title": "Surface Radius M"
+      },
       "corner_order": {
         "default": "bottom-left,bottom-right,top-right,top-left",
         "title": "Corner Order",
@@ -5270,6 +5298,20 @@
             "exclusiveMinimum": 0,
             "title": "Black Square Size M",
             "type": "number"
+          },
+          "surface_radius_m": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "沿 v 轴弯曲的圆柱半径 m，空值表示平面",
+            "title": "Surface Radius M"
           },
           "corner_order": {
             "default": "bottom-left,bottom-right,top-right,top-left",

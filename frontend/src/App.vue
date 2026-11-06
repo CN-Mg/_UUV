@@ -76,6 +76,10 @@ function consume(value: unknown, replay = false) {
     const key = algorithm ? `${algorithm}:${target}` : `truth:${target}`
     if (point && payload.valid !== false) {
       poses[key] = { target_id: target, position_m: point, yaw_rad: Number(payload.yaw_rad ?? 0), ...(algorithm ? { algorithm_id: algorithm } : {}) }
+      const q = payload.orientation_wxyz
+      if (!algorithm && Array.isArray(q) && q.length === 4 && q.every(x => typeof x === 'number' && Number.isFinite(x))) {
+        poses[key].orientation_wxyz = [q[0], q[1], q[2], q[3]]
+      }
       ;(trails[key] ??= []).push(point)
       if (trails[key].length > 1500) trails[key].shift()
     } else if (event.event_type === 'vision_estimate') delete poses[key]

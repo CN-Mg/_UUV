@@ -7,6 +7,6 @@ export interface RunInfo {
   run_id: string; status: string; config_hash?: string; config?: ScenarioConfig
   scenario_id?: string; sim_time_s?: number; event_count?: number; speed?: number; actual_speed?: number | null
 }
-export interface PoseDisplay { target_id: string; position_m: Vector3; yaw_rad: number; algorithm_id?: string }
+export interface PoseDisplay { target_id: string; position_m: Vector3; yaw_rad: number; orientation_wxyz?: [number, number, number, number]; algorithm_id?: string }
 export interface ErrorPoint { time: number; error: number; algorithm: string; target: string }
 export interface MetricRow { algorithm_id: string; rmse: number | null; mae: number | null; p95: number | null; validRate: number | null; count: number | null }

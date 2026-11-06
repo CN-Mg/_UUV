@@ -43,17 +43,24 @@ def yaw_rotation(yaw_rad: float) -> np.ndarray:
 
 
 def load_markers(asset_path: Path | None = None) -> list[MarkerGeometry]:
-    """只读元数据，从中心和轴向重建 0.12 m 编码标记。"""
+    """只读元数据，编码边长由资产声明。"""
     path = asset_path or Path(__file__).resolve().parents[3] / 'assets/models/uuv_001_metadata.json'
     data = json.loads(path.read_text(encoding='utf-8'))
-    return [MarkerGeometry(marker_id=m['id'], **{k: m[k] for k in
+    return [MarkerGeometry(marker_id=m['id'], surface_radius_m=m.get('surface_radius_m'), **{k: m[k] for k in
             ['center_m', 'u_axis', 'v_axis', 'outward_normal', 'black_square_size_m']})
             for m in data['markers']]
 
 
 def marker_corners(marker: MarkerGeometry) -> np.ndarray:
-    """依次为贴图左下、右下、右上、左上，边长不使用白板 0.16 m。"""
+    """依次为贴图左下、右下、右上、左上，按编码边长计算。"""
     signs = np.array([[-1, -1], [1, -1], [1, 1], [-1, 1]])
+    radius = marker.surface_radius_m
+    if radius is not None:
+        half_size = marker.black_square_size_m / 2
+        angles = signs[:, 1:] * half_size / radius
+        return (np.array(marker.center_m) + signs[:, :1] * half_size * marker.u_axis
+                + radius * (np.sin(angles) * marker.v_axis
+                            + (np.cos(angles) - 1) * marker.outward_normal))
     return (np.array(marker.center_m) + marker.black_square_size_m / 2
             * (signs[:, :1] * marker.u_axis + signs[:, 1:] * marker.v_axis))
 

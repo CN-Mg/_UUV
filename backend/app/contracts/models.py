@@ -217,6 +217,7 @@ class MarkerGeometry(Contract):
     v_axis: Vec3
     outward_normal: Vec3
     black_square_size_m: float = Field(.12, gt=0, description='黑色编码方块边长 m，不含白色静区')
+    surface_radius_m: float | None = Field(None, gt=0, description='沿 v 轴弯曲的圆柱半径 m，空值表示平面')
     corner_order: str = 'bottom-left,bottom-right,top-right,top-left'
 
     @model_validator(mode='after')

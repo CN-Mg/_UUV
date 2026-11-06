@@ -106,7 +106,11 @@ def test_ideal_and_flat_numerical_consistency(mode):
     estimate = next(p for kind, p in events if kind == 'vision_estimate' and p['algorithm_id'] == 'flat_snell_baseline_v1')
     np.testing.assert_allclose(estimate['position_m'], [.7, 0, -1], atol=1e-6)
     assert estimate['yaw_rad'] == pytest.approx(np.pi/2, abs=1e-6)
-    assert all(p['marker_id'] != 3 for kind, p in events if kind == 'camera_observation')
+    observations = [p for kind, p in events if kind == 'camera_observation']
+    for camera in engine.config.cameras:
+        visible = {p['marker_id'] for p in observations if p['camera_id'] == camera.camera_id}
+        assert visible & {0, 1, 2}
+        assert not (visible & {3, 4} and visible & {5, 6})
     if mode == 'FLAT_SNELL_REFRACTION':
         metrics = engine.metrics()['algorithms']
         assert metrics['pinhole_baseline_v1']['rmse_m'] > .01
